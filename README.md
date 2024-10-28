@@ -2,7 +2,7 @@
 
 # Contributors
 
-Jeffery Eisenhardt - eisenhardtj
-Trevor Gray - trevor-gray17
-Brandon Yang - CloudUki
-Nathaniel Hajel - nateh17
+* Jeffery Eisenhardt - eisenhardtj
+* Trevor Gray - trevor-gray17
+* Brandon Yang - CloudUki
+* Nathaniel Hajel - nateh17
