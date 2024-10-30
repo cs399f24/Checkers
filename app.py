@@ -1,9 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for
 # from flask_cognito import CognitoAuth
-from flask_socketio import SocketIO, emit, join_room, leave_room
-import boto3
+#from flask_socketio import SocketIO, emit, join_room, leave_room
+#import boto3
 
-# app = Flask(__name__)
+app = Flask(__name__)
 # app.config['SECRET_KEY'] = 'secret!'
 # app.config['COGNITO_REGION'] = 'your-region'
 # app.config['COGNITO_USERPOOL_ID'] = 'your-user-pool-id'
@@ -12,10 +12,10 @@ import boto3
 # app.config['COGNITO_CHECK_TOKEN_EXPIRATION'] = False
 
 # cognito = CognitoAuth(app)
-socketio = SocketIO(app)
+#socketio = SocketIO(app)
 
 # Store connections and player assignments
-s3 = boto3.client('s3')
+#s3 = boto3.client('s3')
 bucket_name = 'Checkers'
 
 # players = []
@@ -23,15 +23,15 @@ bucket_name = 'Checkers'
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', bucket_name=bucket_name)
 
-@app.route('/login')
-def login():
-    return redirect(cognito.get_sign_in_url())
+#@app.route('/login')
+#def login():
+#    return redirect(cognito.get_sign_in_url())
 
-@app.route('/logout')
-def logout():
-    return redirect(cognito.get_sign_out_url())
+#@app.route('/logout')
+#def logout():
+#    return redirect(cognito.get_sign_out_url())
 
 # @app.route('/callback')
 # def callback():
@@ -59,16 +59,17 @@ def logout():
 #     pass
 
 # Handle moves sent by a player
-@socketio.on('move')
-def on_move(data):
-    emit('move', data, room=room_id)
+#@socketio.on('move')
+#def on_move(data):
+#    emit('move', data, room=room_id)
 
 # Handle player disconnect
-@socketio.on('disconnect')
-def on_disconnect():
-    if request.sid in players:
-        players.remove(request.sid)
-    emit('reset', room=room_id)
+#@socketio.on('disconnect')
+#def on_disconnect():
+#    if request.sid in players:
+#        players.remove(request.sid)
+#    emit('reset', room=room_id)
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=8080)
+    app.run(port=8080, host='0.0.0.0')
+    #socketio.run(app, host='0.0.0.0', port=8080)
