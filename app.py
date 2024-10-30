@@ -1,8 +1,16 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
+from flask_cognito import CognitoAuth
 from flask_socketio import SocketIO, emit, join_room, leave_room
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
+app.config['COGNITO_REGION'] = 'your-region'
+app.config['COGNITO_USERPOOL_ID'] = 'your-user-pool-id'
+app.config['COGNITO_APP_CLIENT_ID'] = 'your-app-client-id'
+app.config['COGNITO_APP_CLIENT_SECRET'] = 'your-app-client-secret'
+app.config['COGNITO_CHECK_TOKEN_EXPIRATION'] = False
+
+cognito = CognitoAuth(app)
 socketio = SocketIO(app)
 
 # Store connections and player assignments
@@ -13,8 +21,25 @@ room_id = "checkers_game"  # We'll use a single game room for simplicity
 def index():
     return render_template('index.html')
 
+@app.route('/login')
+def login():
+    return redirect(cognito.get_sign_in_url())
+
+@app.route('/logout')
+def logout():
+    return redirect(cognito.get_sign_out_url())
+
+@app.route('/callback')
+def callback():
+    access_token = cognito.get_access_token(request.args)
+    if access_token:
+        return redirect(url_for('index'))
+    else:
+        return 'Login failed', 401
+
 # When a player connects, assign them a player number and join them to the room
 @socketio.on('join')
+@cognito.auth_required
 def on_join():
     if len(players) >= 2:
         emit('error', {'message': 'Game full'})
@@ -23,7 +48,7 @@ def on_join():
     player = 'player1' if len(players) == 0 else 'player2'
     players.append(player)
     join_room(room_id)
-    emit('assign', {'player': player}, room=request.sid)
+    emit('player_assigned', {'player': player})
 
     if len(players) == 2:
         emit('start', room=room_id)
