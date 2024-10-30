@@ -1,4 +1,8 @@
 #!/bin/bash
+
+#update and install necessary packages
+sudo yum update -y
+
 yum install -y git
 git clone https://github.com/cs399f24/Checkers.git
 cd Checkers
