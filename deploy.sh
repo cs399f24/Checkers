@@ -13,9 +13,9 @@ source .venv/bin/activate
 pip install -r requirements.txt
 
 # Source environment variables from .evn file
-if [-f .env]; then
-    export $(cat .env | xargs)
-fi
+# if [-f .env]; then
+#     export $(cat .env | xargs)
+# fi
 
 # Runs the app.py
 python app.py
