@@ -1,14 +1,15 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from flask_socketio import SocketIO, emit, join_room
 import boto3
+import os
 
 app = Flask(__name__)
-app.secret_key = 'secret' #set secret key for session
+app.secret_key = os.getenv('secret') #set secret key for session
 socketio = SocketIO(app)
 
 #Cognito
-cognito = boto3.client('cognito-idp', region_name='your-region')
-cognito_client_id = 'your-cognito-client-id'
+cognito = boto3.client('cognito-idp', region_name=os.getenv('AWS_REGION'))
+cognito_client_id = os.getenv('COGNITO_CLIENT_ID')
 
 # Store connections and player assignments
 bucket_name = 'Checkers'
@@ -81,15 +82,6 @@ def on_disconnect():
     if request.sid in players:
         players.remove(request.sid)
     emit('reset', room=room_id)
-
-load_dotenv()
-
-s3 = boto3.client(
-    's3',
-    aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
-    aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
-    region_name=os.getenv('AWS_REGION')
-)
 
 if __name__ == '__main__':
     app.run(port=8080, host='0.0.0.0')
