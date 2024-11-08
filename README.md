@@ -1,5 +1,5 @@
 # Checkers
-
+    An online Checkers game that utilizes AWS for different parts of it. 
 # Contributors
 
 * Jeffery Eisenhardt - eisenhardtj
