@@ -27,8 +27,9 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 
-# Source environment variables from .env file if it exists
-# if [ -f .env ]; then
+
+# Source environment variables from .evn file
+# if [-f .env]; then
 #     export $(cat .env | xargs)
 # fi
 
