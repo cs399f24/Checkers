@@ -50,7 +50,7 @@ bucket_name = 'Checkers'
 def index():
     # if not is_authenticated():
     #     return redirect(url_for('login'))
-    return render_template('templates/index.html', bucket_name=bucket_name)
+    return render_template('index.html', bucket_name=bucket_name)
 
 # When a player connects, assign them a player number and join them to the room
 # @socketio.on('join')
