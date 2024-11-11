@@ -98,8 +98,5 @@ def start_game():
 ...
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=8080) # start the webserver on port 8080 with debug and on 0.0.0.0 so it can be accessed from anywhere
-
-if __name__ == '__main__':
     app.run(port=8080, host='0.0.0.0')
     # socketio.run(app, host="0.0.0.0", port=8080)
