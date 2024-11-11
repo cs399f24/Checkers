@@ -61,7 +61,11 @@ def start_game():
     game_state = {}  # Initialize game state
     return jsonify(game_state) # this is required when sending any JSON value from flask, it basically sets the content-type headers and a few other helpful things, this should also be followed by `, 200` as a status code for the function but it does default to 200 iirc. 
 @app.route('/state', methods=['GET']) # the methods='GET' is optional, as its the same as the default value
+def get_state():
+    # Placeholder for getting the game state
+    game_state = {}  # Replace with actual game state retrieval logic
+    return jsonify(game_state)
 
 if __name__ == '__main__':
-    app.run(port=8080, host='0.0.0.0')
+    app.run(debug=True, port=8080, host='0.0.0.0')
     # socketio.run(app, host="0.0.0.0", port=8080)
