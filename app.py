@@ -83,12 +83,6 @@ def index():
 #         players.remove(request.sid)
 #     emit('reset', room=room_id)
 
-app = Flask(__name__) # make the flask object, it needs the file name for some reason
-
-@app.route('/') # the endpoint (defaults to GET)
-def index(): # the function that is ran when you go to that endpoint
-  return render_template('index.html') # returns the index.html file, this allows for some templating, but it isn't required.
-
 # Endpoint to start a new game
 @app.route('/start', methods=['POST']) # this function allows the POST method
 def start_game():
