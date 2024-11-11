@@ -18,8 +18,7 @@ def get_bucket_name():
             return bucket['Name']
     return 'defualt-bucket-name'
 
-# # Store connections and player assignments
-bucket_name = 'Checkers'
+# Store connections and player assignments
 players = []
 room_id = "checkers_game"  # We'll use a single game room for simplicity
 
