@@ -67,5 +67,5 @@ def get_state():
     return jsonify(game_state)
 
 if __name__ == '__main__':
-    app.run(port=8080, host='0.0.0.0')
+    app.run(debug=True, port=8080, host='0.0.0.0')
     # socketio.run(app, host="0.0.0.0", port=8080)
