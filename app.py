@@ -83,6 +83,23 @@ def index():
 #         players.remove(request.sid)
 #     emit('reset', room=room_id)
 
+app = Flask(__name__) # make the flask object, it needs the file name for some reason
+
+@app.route('/') # the endpoint (defaults to GET)
+def index(): # the function that is ran when you go to that endpoint
+  return render_template('index.html') # returns the index.html file, this allows for some templating, but it isn't required.
+
+# Endpoint to start a new game
+@app.route('/start', methods=['POST']) # this function allows the POST method
+def start_game():
+    game_state = {}  # Initialize game state
+    return jsonify(game_state) # this is required when sending any JSON value from flask, it basically sets the content-type headers and a few other helpful things, this should also be followed by `, 200` as a status code for the function but it does default to 200 iirc. 
+@app.route('/state', methods=['GET']) # the methods='GET' is optional, as its the same as the default value
+...
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=8080) # start the webserver on port 8080 with debug and on 0.0.0.0 so it can be accessed from anywhere
+
 if __name__ == '__main__':
     app.run(port=8080, host='0.0.0.0')
     # socketio.run(app, host="0.0.0.0", port=8080)
