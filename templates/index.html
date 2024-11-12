@@ -15,29 +15,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
     </head>
   <body>
-    <script>
-      const socket = io();
-
-      socket.on('game_update', function(data) {
-          // Update the game board with the new game state
-          updateGameBoard(data);
-      });
-
-      function updateGameBoard(gameState) {
-          // Logic to update the game board UI based on the new game state
-          console.log("Game state updated:", gameState);
-          // Here you would render the new game state on the board
-      }
-
-      // Fetch initial game state when the page loads
-      fetch('/get_game_state')
-          .then(response => response.json())
-          .then(data => {
-              updateGameBoard(data);
-          })
-          .catch(error => console.error('Error fetching game state:', error));
-    </script>
-
     <div class="container">
       <div class="next-player counter">
         <div class="occupied whitePiece" id="next-player"></div>
@@ -71,5 +48,27 @@
     </div>
     <script src="https://checkers-bucket.s3.amazonaws.com/static/function.js"></script>
     <script src="https://checkers-bucket.s3.amazonaws.com/static/script.js"></script>
+    <script>
+      const socket = io();
+
+      socket.on('game_update', function(data) {
+          // Update the game board with the new game state
+          updateGameBoard(data);
+      });
+
+      function updateGameBoard(gameState) {
+          // Logic to update the game board UI based on the new game state
+          console.log("Game state updated:", gameState);
+          // Here you would render the new game state on the board
+      }
+
+      // Fetch initial game state when the page loads
+      fetch('/get_game_state')
+          .then(response => response.json())
+          .then(data => {
+              updateGameBoard(data);
+          })
+          .catch(error => console.error('Error fetching game state:', error));
+    </script>
   </body>
 </html>
