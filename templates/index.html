@@ -13,7 +13,7 @@
       crossorigin="anonymous"
     />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
-    </head>
+  </head>
   <body>
     <div class="container">
       <div class="next-player counter">
@@ -35,40 +35,52 @@
 
     <div id="easyModal" class="modal">
       <div class="modal-content">
-          <div class="modal-body">
-              <p>The <strong id="winner"></strong> player won the game !!</p>
-              <p> <span id="loser"></span>, whould you take your revenge ???</p>
-
-              <div class="btn-container">
-                <button class="btn" onclick="location.reload()">Yes </button>
-                <button class="btn" onclick="modalClose()">No</button>
-              </div>
+        <div class="modal-body">
+          <p>The <strong id="winner"></strong> player won the game !!</p>
+          <p><span id="loser"></span>, would you take your revenge ???</p>
+          <div class="btn-container">
+            <button class="btn" onclick="location.reload()">Yes</button>
+            <button class="btn" onclick="modalClose()">No</button>
           </div>
+        </div>
       </div>
     </div>
+
     <script src="https://checkers-bucket.s3.amazonaws.com/static/function.js"></script>
     <script src="https://checkers-bucket.s3.amazonaws.com/static/script.js"></script>
     <script>
       const socket = io();
 
       socket.on('game_update', function(data) {
-          // Update the game board with the new game state
-          updateGameBoard(data);
+        // Update the game board with the new game state
+        updateGameBoard(data);
       });
 
       function updateGameBoard(gameState) {
-          // Logic to update the game board UI based on the new game state
-          console.log("Game state updated:", gameState);
-          // Here you would render the new game state on the board
+        // Logic to update the game board UI based on the new game state
+        console.log("Game state updated:", gameState);
+        // Here you would render the new game state on the board
       }
 
-      // Fetch initial game state when the page loads
-      fetch('/get_game_state')
-          .then(response => response.json())
-          .then(data => {
-              updateGameBoard(data);
-          })
-          .catch(error => console.error('Error fetching game state:', error));
+      // File upload functionality
+      function uploadFile() {
+        const fileInput = document.getElementById('file-input');
+        const file = fileInput.files[0];
+        const formData = new FormData();
+        formData.append('file', file);
+
+        fetch('/upload', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data.message);
+        })
+        .catch(error => console.error('Error uploading file:', error));
+      }
     </script>
+    <input type="file" id="file-input" />
+    <button onclick="uploadFile()">Upload File</button>
   </body>
 </html>
