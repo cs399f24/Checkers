@@ -1,10 +1,5 @@
-<<<<<<< HEAD
 from flask import Flask, request, jsonify, render_template
 import json
-=======
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
-from flask_socketio import SocketIO
->>>>>>> 9cdb2e4d07493dc3e47fd6bd5bed16ad2c722274
 import boto3
 from botocore.exceptions import ClientError
 from flask_socketio import SocketIO, emit
@@ -15,7 +10,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-<<<<<<< HEAD
 socketio = SocketIO(app)
 
 # DynamoDB configuration
@@ -27,7 +21,7 @@ dynamodb = boto3.resource('dynamodb', region_name=REGION)
 game_table = dynamodb.Table(GAME_TABLE_NAME)
 
 # S3 configuration
-S3_BUCKET_NAME = os.getenv('checkers-bucket')  # Ensure you have this environment variable set
+S3_BUCKET_NAME = os.getenv('S3_BUCKET_NAME')  # Ensure you have this environment variable set
 s3 = boto3.client('s3')
 
 # Fetch game state from DynamoDB
@@ -122,12 +116,3 @@ def handle_disconnect():
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, host='0.0.0.0', port=8080)
-=======
-
-
-
-
-if __name__ == '__main__':
-    app.run(port=8080, host='0.0.0.0')
-    
->>>>>>> 9cdb2e4d07493dc3e47fd6bd5bed16ad2c722274
