@@ -5,15 +5,39 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Checkers</title>
-    <link rel="stylesheet" href="https://checkers-game-cs399.s3.amazonaws.com/static/styles.css" />
+    <link rel="stylesheet" href="https://checkers-bucket.s3.amazonaws.com/static/styles.css" />
     <link
       rel="stylesheet"
       href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"
       integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm"
       crossorigin="anonymous"
     />
-  </head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+    </head>
   <body>
+    <script>
+      const socket = io();
+
+      socket.on('game_update', function(data) {
+          // Update the game board with the new game state
+          updateGameBoard(data);
+      });
+
+      function updateGameBoard(gameState) {
+          // Logic to update the game board UI based on the new game state
+          console.log("Game state updated:", gameState);
+          // Here you would render the new game state on the board
+      }
+
+      // Fetch initial game state when the page loads
+      fetch('/get_game_state')
+          .then(response => response.json())
+          .then(data => {
+              updateGameBoard(data);
+          })
+          .catch(error => console.error('Error fetching game state:', error));
+    </script>
+
     <div class="container">
       <div class="next-player counter">
         <div class="occupied whitePiece" id="next-player"></div>
@@ -45,7 +69,7 @@
           </div>
       </div>
     </div>
-    <script src="https://{bucket_name}.s3.amazonaws.com/static/function.js"></script>
-    <script src="https://{bucket_name}.s3.amazonaws.com/static/script.js"></script>
+    <script src="https://checkers-bucket.s3.amazonaws.com/static/function.js"></script>
+    <script src="https://checkers-bucket.s3.amazonaws.com/static/script.js"></script>
   </body>
 </html>
