@@ -1,92 +1,118 @@
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
-from flask_socketio import SocketIO, emit, join_room
+from flask import Flask, request, jsonify, render_template
+import json
 import boto3
+from botocore.exceptions import ClientError
+from flask_socketio import SocketIO, emit
 import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 app = Flask(__name__)
-# app.secret_key = os.getenv('secret') #set secret key for session
-# socketio = SocketIO(app)
+socketio = SocketIO(app)
 
-bucket_name = 'Checkers'
-# players = []
-# room_id = "checkers_game"  # We'll use a single game room for simplicity
+# DynamoDB configuration
+GAME_TABLE_NAME = "checkers-db"  # Change to your game state table name
+REGION = "us-east-1"
 
-#route user login
-# @app.route('/login', methods=['GET', 'POST'])
-# def login():
-#     username = request.form.get('username')
-#     password = request.form.get('password')
-    
-#     try:
-#         response = cognito.initiate_auth(
-#             ClientId=cognito_client_id,
-#             AuthFlow='USER_PASSWORD_AUTH',
-#                 AuthParameters={'USERNAME': username, 'PASSWORD': password}
-#         )
-#         # Save the token in session for subsequent requests
-#         session['token'] = response['AuthenticationResult']['IdToken']
-#         return redirect(url_for('index'))
-#     except cognito.exceptions.NotAuthorizedException:
-#         return jsonify({"error": "Invalid credentials"}), 401
-    
-#     return render_template('login.html')
+# Create DynamoDB resource
+dynamodb = boto3.resource('dynamodb', region_name=REGION)
+game_table = dynamodb.Table(GAME_TABLE_NAME)
 
-# Check if the user is authenticated before allowing them to join the game
-# def is_authenticated():
-#     token = session.get('token')
-#     if not token:
-#         return False
+# S3 configuration
+S3_BUCKET_NAME = os.getenv('checkers-bucket')  # Ensure you have this environment variable set
+s3 = boto3.client('s3')
 
-#     # Optionally, add token validation logic here if needed
+# Fetch game state from DynamoDB
+def get_game_state_from_dynamodb():
+    try:
+        response = game_table.get_item(Key={'game_id': 'checkers_game'})
+        if 'Item' in response:
+            return response['Item']
+        else:
+            return {
+                "board": [
+                    [0, -1, 0, -1, 0, -1, 0, -1],
+                    [-1, 0, -1, 0, -1, 0, -1, 0],
+                    [0, -1, 0, -1, 0, -1, 0, -1],
+                    [-1, 0, -1, 0, -1, 0, -1, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 1, 0, 1, 0, 1, 0, 1],
+                    [1, 0, 1, 0, 1, 0, 1, 0],
+                    [0, 1, 0, 1, 0, 1, 0, 1],
+                    [1, 0, 1, 0, 1, 0, 1, 0],
+                ],
+                "currentPlayer": 1
+            }
+    except ClientError as e:
+        raise Exception("Failed to get item from DynamoDB: " + str(e))
 
-#     return True
+# Update game state in DynamoDB
+def update_game_state_in_dynamodb(game_state):
+    try:
+        game_table.put_item(
+            Item={
+                'game_id': 'checkers_game',
+                'board': game_state['board'],
+                'currentPlayer': game_state['currentPlayer']
+            }
+        )
+    except ClientError as e:
+        raise Exception("Failed to update DynamoDB: " + str(e))
 
+# Home route
 @app.route('/')
 def index():
-    # if not is_authenticated():
-    #     return redirect(url_for('login'))
-    return render_template('index.html', bucket_name=bucket_name)
+    return render_template('index.html')
 
-# When a player connects, assign them a player number and join them to the room
-# @socketio.on('join')
-# def on_join():
-#     if not is_authenticated():
-#         emit('error', {'message': 'User not authenticated'})
-#         return
+# Get game state route
+@app.route('/get_game_state', methods=['GET'])
+def get_game_state():
+    try:
+        game_state = get_game_state_from_dynamodb()
+        return jsonify(game_state)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-#     if len(players) >= 2:
-#         emit('error', {'message': 'Game full'})
-#         return
+# Make move route
+@app.route('/make_move', methods=['POST'])
+def make_move():
+    try:
+        data = request.get_json()
+        if 'board' in data and 'currentPlayer' in data:
+            update_game_state_in_dynamodb(data)
+            socketio.emit('game_update', data)  # Emit the updated game state to all connected clients
+            return jsonify({"message": "Game state updated successfully"}), 200
+        else:
+            return jsonify({"error": "Invalid game state data"}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-#     player = 'player1' if len(players) == 0 else 'player2'
-#     players.append(player)
-#     join_room(room_id)
-#     emit('player_assigned', {'player': player})
+# File upload route
+@app.route('/upload', methods=['POST'])
+def upload_file():
+    if 'file' not in request.files:
+        return jsonify({"error": "No file part"}), 400
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({"error": "No selected file"}), 400
 
-#     if len(players) == 2:
-#         emit('start', room=room_id)
+    # Upload file to S3
+    try:
+        s3.upload_fileobj(file, S3_BUCKET_NAME, file.filename)
+        return jsonify({"message": "File uploaded successfully"}), 200
+    except ClientError as e:
+        return jsonify({"error": str(e)}), 500
 
-# Handle moves sent by a player
-# @socketio.on('move')
-# def on_move(data):
-#     emit('move', data, room=room_id)
+@socketio.on('connect')
+def handle_connect():
+    print("Client connected")
 
-# # Handle player disconnect
-# @socketio.on('disconnect')
-# def on_disconnect():
-#     if request.sid in players:
-#         players.remove(request.sid)
-#     emit('reset', room=room_id)
-
-@app.route('/start', methods=['POST']) # this function allows the POST method
-def start_game():
-    game_state = {}  # Initialize game state
-    return jsonify(game_state) # this is required when sending any JSON value from flask, it basically sets the content-type headers and a few other helpful things, this should also be followed by `, 200` as a status code for the function but it does default to 200 iirc. 
-@app.route('/state', methods=['GET']) # the methods='GET' is optional, as its the same as the default value
-def get_state():
-    game_state = {}  # Retrieve the current game state
-    return jsonify(game_state)
+@socketio.on('disconnect')
+def handle_disconnect():
+    print("Client disconnected")
 
 if __name__ == '__main__':
-    app.run(port=8080, host='0.0.0.0')
-    # socketio.run(app, host="0.0.0.0", port=8080)
+    socketio.run(app, debug=True, host='0.0.0.0', port=8080)
