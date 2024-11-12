@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 from flask import Flask, request, jsonify, render_template
 import json
+=======
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+from flask_socketio import SocketIO
+>>>>>>> 9cdb2e4d07493dc3e47fd6bd5bed16ad2c722274
 import boto3
 from botocore.exceptions import ClientError
 from flask_socketio import SocketIO, emit
@@ -10,6 +15,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
+<<<<<<< HEAD
 socketio = SocketIO(app)
 
 # DynamoDB configuration
@@ -116,3 +122,12 @@ def handle_disconnect():
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, host='0.0.0.0', port=8080)
+=======
+
+
+
+
+if __name__ == '__main__':
+    app.run(port=8080, host='0.0.0.0')
+    
+>>>>>>> 9cdb2e4d07493dc3e47fd6bd5bed16ad2c722274
