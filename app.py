@@ -8,6 +8,7 @@ import os
 app = Flask(__name__)
 socketio = SocketIO(app)
 
+# bucket_name = 'checkers-game-cs399'
 
 
 
