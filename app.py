@@ -14,7 +14,7 @@ bucket_name = 'checkers-bucket'
 
 
 # Home route
-@app.route('/template/index.html')
+@app.route('/')
 def index():
     return render_template('index.html', bucket_name=bucket_name)
 
