@@ -1,5 +1,5 @@
-from flask import Flask, render_template, jsonify, request
-from flask_socketio import SocketIO, emit
+from flask import Flask, render_template
+from flask_socketio import SocketIO
 import boto3
 from botocore.exceptions import ClientError
 import json
@@ -8,7 +8,7 @@ import os
 app = Flask(__name__)
 socketio = SocketIO(app)
 
-bucket_name = 'checkers-bucket'
+bucket_name = 'checkers-game-cs399'
 
 
 
@@ -31,7 +31,7 @@ dynamodb = boto3.resource('dynamodb', region_name='us-east-1',  )
 # Function to create the DynamoDB table
 def create_table():
     table = dynamodb.create_table(
-        TableName='checkers-db',
+        TableName='checkers-game',
         KeySchema=[
             {
                 'AttributeName': 'GameID',
@@ -89,30 +89,6 @@ def get_game(game_id):
             print("Game not found.")
     except ClientError as e:
         print("Error retrieving game:", e.response['Error']['Message'])
-
-# route to get game state
-@app.route('/game/<game_id>' , methods=['GET'])
-def get_game_state(game_id):
-    game_state = get_game(game_id)
-    if game_state:
-        return jsonify(game_state)
-    else:
-        return jsonify({"error": "Game not found."}), 404
-    
-# route to update game state
-@app.route('/game/<game_id>', methods=['POST'])
-def update_game_state(game_id):
-    data = request.json
-    board_state = data.get('boardState')
-    last_move_by = data.get('lastMoveBy')
-    update_game(game_id, board_state, last_move_by)
-    return jsonify({"message": "Game state updated."})
-
-#handle moves sent by player
-@socketio.on('move')
-def on_move(data):
-    emit('move', data)
-
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, host='0.0.0.0', port=8080)
