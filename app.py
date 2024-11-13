@@ -17,13 +17,16 @@ bucket_name = 'checkers-game-cs399'
 def index():
     return render_template('index.html', bucket_name=bucket_name)
 
+@socketio.on('connect')
+def handle_connect():
+    print("Client connected")
 
 @socketio.on('disconnect')
 def handle_disconnect():
     print("Client disconnected")
 
     # Initialize a session using Amazon DynamoDB
-dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+dynamodb = boto3.resource('dynamodb', region_name='us-east-1',  )
 
 # Function to create the DynamoDB table
 def create_table():
