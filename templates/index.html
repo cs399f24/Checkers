@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,74 +13,54 @@
       crossorigin="anonymous"
     />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
-  </head>
-  <body>
+</head>
+<body>
     <div class="container">
-      <div class="next-player counter">
-        <div class="occupied whitePiece" id="next-player"></div>
-        Player
-      </div>
-      <div class="game" id="game"></div>
-      <div class="counter">
-        <div>
-          <div class="occupied whitePiece"></div>
-          <span id="white-player-count-pieces">10</span>
+        <div class="next-player counter">
+            <div class="occupied whitePiece" id="next-player"></div>
+            Player
         </div>
-        <div>
-          <div class="occupied blackPiece"></div>
-          <span id="black-player-count-pieces">10</span>
+        <div class="game" id="game"></div>
+        <div class="counter">
+            <div>
+                <div class="occupied whitePiece"></div>
+                <span id="white-player-count-pieces">10</span>
+            </div>
+            <div>
+                <div class="occupied blackPiece"></div>
+                <span id="black-player-count-pieces">10</span>
+            </div>
         </div>
-      </div>
     </div>
 
     <div id="easyModal" class="modal">
-      <div class="modal-content">
-        <div class="modal-body">
-          <p>The <strong id="winner"></strong> player won the game !!</p>
-          <p><span id="loser"></span>, would you take your revenge ???</p>
-          <div class="btn-container">
-            <button class="btn" onclick="location.reload()">Yes</button>
-            <button class="btn" onclick="modalClose()">No</button>
-          </div>
+        <div class="modal-content">
+            <div class="modal-body">
+                <p>The <strong id="winner"></strong> player won the game !!</p>
+                <p><span id="loser"></span>, would you take your revenge ???</p>
+                <div class="btn-container">
+                    <button class="btn" onclick="location.reload()">Yes</button>
+                    <button class="btn" onclick="modalClose()">No</button>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
 
     <script src="https://checkers-bucket.s3.amazonaws.com/static/function.js"></script>
     <script src="https://checkers-bucket.s3.amazonaws.com/static/script.js"></script>
     <script>
-      const socket = io();
+        const socket = io();
 
-      socket.on('game_update', function(data) {
-        // Update the game board with the new game state
-        updateGameBoard(data);
-      });
+        socket.on('game_update', function(data) {
+            // Update the game board with the new game state
+            updateGameBoard(data);
+        });
 
-      function updateGameBoard(gameState) {
-        // Logic to update the game board UI based on the new game state
-        console.log("Game state updated:", gameState);
-        // Here you would render the new game state on the board
-      }
-
-      // File upload functionality
-      function uploadFile() {
-        const fileInput = document.getElementById('file-input');
-        const file = fileInput.files[0];
-        const formData = new FormData();
-        formData.append('file', file);
-
-        fetch('/upload', {
-          method: 'POST',
-          body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-          console.log(data.message);
-        })
-        .catch(error => console.error('Error uploading file:', error));
-      }
+        function updateGameBoard(gameState) {
+            // Logic to update the game board UI based on the new game state
+            console.log("Game state updated:", gameState);
+            // Here you would render the new game state on the board
+        }
     </script>
-    <input type="file" id="file-input" />
-    <button onclick="uploadFile()">Upload File</button>
-  </body>
+</body>
 </html>
