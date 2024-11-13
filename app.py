@@ -23,7 +23,7 @@ def handle_disconnect():
     print("Client disconnected")
 
     # Initialize a session using Amazon DynamoDB
-dynamodb = boto3.resource('dynamodb')
+dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 
 # Function to create the DynamoDB table
 def create_table():
