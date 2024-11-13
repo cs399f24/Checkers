@@ -7,7 +7,7 @@ import json
 import os
 
 app = Flask(__name__)
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 bucket_url = "https://checkers-game-cs399.s3.amazonaws.com/templates/index.html"
 
