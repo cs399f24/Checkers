@@ -8,7 +8,7 @@ import os
 app = Flask(__name__)
 socketio = SocketIO(app)
 
-bucket_name = 'checkers-bucket'
+bucket_name = 'checkers-game-cs399'
 
 
 
@@ -53,7 +53,7 @@ def create_table():
 
 # Function to update the game state
 def update_game(game_id, board_state, last_move_by):
-    table = dynamodb.Table('checkers-game')
+    table = dynamodb.Table('checkers-game', region_name='us-east-1')
     
     next_turn = 'Player2' if last_move_by == 'Player1' else 'Player1'
     
@@ -76,7 +76,7 @@ def update_game(game_id, board_state, last_move_by):
 
 # Function to retrieve the current game state
 def get_game(game_id):
-    table = dynamodb.Table('checkers-game')
+    table = dynamodb.Table('checkers-game', region_name='us-east-1')
     
     try:
         response = table.get_item(Key={'GameID': game_id})
