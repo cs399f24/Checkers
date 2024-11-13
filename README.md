@@ -29,6 +29,14 @@ An online Checkers game that utilizes AWS resources for hosting and storage.
 ### 2. Connect to Your EC2 Instance
 
 1. **Open a Terminal** on your local machine.
-2. **Navigate to the Key Pair**: Change to the directory where the `.pem` file is stored:
+2. Navigate to the directory where your key pair (.pem file) is saved.
+3. Connect to your EC2 instance using SSH:
    ```sh
-   cd path/to/your-key-pair
+   ssh -i "your-key-pair.pem" ec2-user@your-ec2-public-dns
+
+### 3. Change Bucket Name
+
+1. After the instance is created, you want to edit the index.html and replace the s3 bucket names with the name of your bucket. 
+    - `cd templates`
+    - `nano index.html`
+2. Then `sudo chmod +x deploy.sh` and then run the deploy script with `./deploy.sh`
