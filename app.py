@@ -4,10 +4,12 @@ from flask_socketio import SocketIO
 app = Flask(__name__)
 socketio = SocketIO(app)
 
+bucket_name = 'checkers-bucket'
+
 # Home route
 @app.route('/')
 def index():
-    return render_template('template/index.html')
+    return render_template('index.html', bucket_name=bucket_name)
 
 @socketio.on('connect')
 def handle_connect():
