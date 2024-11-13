@@ -1,4 +1,4 @@
-from flask import Flask, Response
+from flask import Flask, Response, render_template
 from flask_socketio import SocketIO
 import boto3
 import requests
@@ -9,14 +9,14 @@ import os
 app = Flask(__name__)
 socketio = SocketIO(app)
 
-# bucket_name = 'checkers-game-cs399'
+bucket_name = 'checkers-bucket'
 
 
 
 # Home route
-@app.route('/')
+@app.route('/template/index.html')
 def index():
-    return render_template('https://checkers-game-cs399.s3.amazonaws.com/templates/index.html')
+    return render_template('index.html', bucket_name=bucket_name)
 
 @socketio.on('connect')
 def handle_connect():
