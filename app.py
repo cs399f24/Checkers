@@ -1,6 +1,7 @@
-from flask import Flask, render_template
+from flask import Flask, Response
 from flask_socketio import SocketIO
 import boto3
+import requests
 from botocore.exceptions import ClientError
 import json
 import os
@@ -8,14 +9,19 @@ import os
 app = Flask(__name__)
 socketio = SocketIO(app)
 
-# bucket_name = 'checkers-game-cs399'
+bucket_url = "https://checkers-game-cs399.s3.amazonaws.com/templates/index.html"
 
-
-
-# Home route
 @app.route('/')
 def index():
-    return render_template('https://checkers-game-cs399.s3.amazonaws.com/templates/index.html')
+    # Fetch the HTML content from the S3 bucket
+    try:
+        response = requests.get(bucket_url)
+        response.raise_for_status()  # Raise an error for bad status codes
+        html_content = response.text  # Get the HTML content from the response
+        return Response(html_content, mimetype='text/html')  # Serve the HTML content
+    except requests.RequestException as e:
+        return f"Error fetching HTML from S3: {str(e)}", 500
+
 
 @socketio.on('connect')
 def handle_connect():
