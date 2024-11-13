@@ -8,14 +8,14 @@ import os
 app = Flask(__name__)
 socketio = SocketIO(app)
 
-bucket_name = 'checkers-game-cs399'
+# bucket_name = 'checkers-game-cs399'
 
 
 
 # Home route
-@app.route('/')
-def index():
-    return render_template('index.html', bucket_name=bucket_name)
+# @app.route('/')
+# def index():
+#     return render_template('index.html', bucket_name=bucket_name)
 
 @socketio.on('connect')
 def handle_connect():
