@@ -1,14 +1,28 @@
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+from flask import Flask, render_template
 from flask_socketio import SocketIO
+import boto3
 from botocore.exceptions import ClientError
 import json
-import boto3
 import os
 
 app = Flask(__name__)
+socketio = SocketIO(app)
+
+bucket_name = 'checkers-bucket'
 
 
-# Initialize a session using Amazon DynamoDB
+
+# Home route
+@app.route('/')
+def index():
+    return render_template('index.html', bucket_name=bucket_name)
+
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    print("Client disconnected")
+
+    # Initialize a session using Amazon DynamoDB
 dynamodb = boto3.resource('dynamodb')
 
 # Function to create the DynamoDB table
@@ -73,8 +87,5 @@ def get_game(game_id):
     except ClientError as e:
         print("Error retrieving game:", e.response['Error']['Message'])
 
-
-
 if __name__ == '__main__':
-    app.run(port=8080, host='0.0.0.0')
-    
+    socketio.run(app, debug=True, host='0.0.0.0', port=8080)
