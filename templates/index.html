@@ -53,14 +53,15 @@
 
     <script src="https://checkers-game-cs399.s3.amazonaws.com/static/function.js"></script>
     <script src="https://checkers-game-cs399.s3.amazonaws.com/static/function.js"></script>
-    <script>
-        function loadSelectedJson() {
-            const selectedFile = document.getElementById("jsonFile").value;
-            $.getJSON(`https://checkers-game-cs399.s3.amazonaws.com/static/${selectedFile}`, function(data){
-                renderBoard(data.board);
+        <script>
+        $(function(){
+            var checkerboard = [];
+            $.getJSON("checkersboard.json", function(data){
+                checkerboard = data.board;
+                renderBoard(checkerboard);
             });
-        }
-
+        });
+    
         function renderBoard(board) {
             const game = document.getElementById("game");
             game.innerHTML = "";
