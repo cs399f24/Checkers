@@ -110,19 +110,5 @@
             }
         }
     </script>
-    <script>
-        const socket = io();
-
-        socket.on('game_update', function(data) {
-            // Update the game board with the new game state
-            updateGameBoard(data);
-        });
-
-        function updateGameBoard(gameState) {
-            // Logic to update the game board UI based on the new game state
-            console.log("Game state updated:", gameState);
-            // Here you would render the new game state on the board
-        }
-    </script>
 </body>
 </html>
