@@ -57,3 +57,8 @@ echo "Application server (Port 8080) rule added."
 
 
 # Save the security group ID to a file
+
+# Allows execution permissions for the redeploy.sh
+
+redeploy="redeploy.sh"
+chmod +x $redeploy
