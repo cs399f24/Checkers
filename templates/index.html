@@ -7,7 +7,45 @@
     <title>Checkers</title>
     <link rel="stylesheet" href="https://checkers-game-cs399.s3.amazonaws.com/static/styles.css" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+    <script>
+        const server = 'http://localhost:8080';
+                async function getBoard(board) {
+            try {
+                const response = await fetch(server + '/board', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ board: board })
+                });
+
+                if (response.ok) {
+                    updateBoard();
+                } else {
+                    alert('Failed to get board');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while getting board');
+            }
+        }
+
+        async function updateBoard() {
+            try {
+                const response = await fetch(server + '/results');
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('results').innerText = JSON.stringify(data);
+                } else {
+                    alert('Failed to fetch results');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while fetching results');
+            }
+        }
+
+    </script>
 </head>
 <body>
     <div class="container">
