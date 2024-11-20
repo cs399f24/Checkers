@@ -13,7 +13,7 @@ class Piece {
   let currentPlayer = 1;
   let posNewPosition = [];
   let capturedPosition = [];
-  let board = require("./checkersboard.json")["board"];
+  let board = require("https://checkers-game-cs399.s3.us-east-1.amazonaws.com/checkersboard.json")["board"];
   
   builBoard();
   
