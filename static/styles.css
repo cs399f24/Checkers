@@ -37,7 +37,7 @@ body {
   gap: 15px;
   font-size: 20px;
 }
-.occupied {
+/* .occupied {
   width: 30px;
   height: 30px;
   border-radius: 50%;
@@ -49,7 +49,7 @@ body {
 
 .blackPiece {
   background-color: black;
-}
+} */
 
 
 .game {
@@ -82,6 +82,21 @@ body {
   justify-content: center;
   border: 1px solid black;
   box-sizing: border-box;
+}
+
+.cell .occupied {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #000; /* Default color for black pieces */
+}
+
+.cell .whitePiece {
+  background-color: #fff; /* Color for white pieces */
+}
+
+.cell .blackPiece {
+  background-color: #000; /* Color for black pieces */
 }
 
 /* Specific cell colors */

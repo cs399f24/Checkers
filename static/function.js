@@ -1,9 +1,26 @@
+let board = JSON.parse(document.getElementById('board-data').textContent);
+let currentPlayer = 1; // Assuming 1 is one player and -1 is the other
+let capturedPosition = [];
+let posNewPosition = [];
+let readyToMove = null;
+
+class Piece {
+    constructor(row, column) {
+        this.row = row;
+        this.column = column;
+    }
+
+    compare(other) {
+        return this.row === other.row && this.column === other.column;
+    }
+}
+
 function movePiece(e) {
     let piece = e.target;
-    const row = parseInt(piece.getAttribute("row"));
-    const column = parseInt(piece.getAttribute("column"));
+    const row = parseInt(piece.getAttribute("data-row"));
+    const column = parseInt(piece.getAttribute("data-column"));
     let p = new Piece(row, column);
-  
+
     if (capturedPosition.length > 0) {
         enableToCapture(p);
     } else {
@@ -11,18 +28,19 @@ function movePiece(e) {
             enableToMove(p);
         }
     }
-  
+
     if (currentPlayer === board[row][column]) {
-        player = reverse(currentPlayer);
+        let player = reverse(currentPlayer);
         if (!findPieceCaptured(p, player)) {
             findPossibleNewPosition(p, player);
         }
     }
-  }
-  
-  function enableToCapture(p) {
+}
+
+function enableToCapture(p) {
     let find = false;
     let pos = null;
+    let old = null;
     capturedPosition.forEach((element) => {
         if (element.newPosition.compare(p)) {
             find = true;
@@ -31,76 +49,73 @@ function movePiece(e) {
             return;
         }
     });
-  
+
     if (find) {
         board[pos.row][pos.column] = currentPlayer;
         board[readyToMove.row][readyToMove.column] = 0;
         board[old.row][old.column] = 0;
-  
+
         readyToMove = null;
         capturedPosition = [];
         posNewPosition = [];
         displayCurrentPlayer();
-        builBoard();
-  
+        buildBoard();
+
         currentPlayer = reverse(currentPlayer);
     } else {
-        builBoard();
+        buildBoard();
     }
-  }
-  
-  function enableToMove(p) {
+}
+
+function enableToMove(p) {
     let find = false;
-    let newPosition = null;
-  
-    posNewPosition.forEach((element) => {
-        if (element.compare(p)) {
+    posNewPosition.forEach((pos) => {
+        if (pos.compare(p)) {
             find = true;
-            newPosition = element;
             return;
         }
     });
+
+    if (find) {
+        moveThePiece(p);
+    } else {
+        buildBoard();
+    }
+}
   
-    if (find) moveThePiece(newPosition);
-    else builBoard();
-  }
-  
-  function moveThePiece(newPosition) {
+function moveThePiece(newPosition) {
     board[newPosition.row][newPosition.column] = currentPlayer;
     board[readyToMove.row][readyToMove.column] = 0;
-  
+
     readyToMove = null;
     posNewPosition = [];
     capturedPosition = [];
-  
+
     currentPlayer = reverse(currentPlayer);
-  
+
     displayCurrentPlayer();
-    builBoard();
-  }
-  
-  function findPossibleNewPosition(piece, player) {
+    buildBoard();
+}
+
+function findPossibleNewPosition(piece, player) {
     if (board[piece.row + player][piece.column + 1] === 0) {
         readyToMove = piece;
         markPossiblePosition(piece, player, 1);
     }
-  
+
     if (board[piece.row + player][piece.column - 1] === 0) {
         readyToMove = piece;
         markPossiblePosition(piece, player, -1);
     }
-  }
+}
+
+function markPossiblePosition(piece, player, direction) {
+    posNewPosition.push(new Piece(piece.row + player, piece.column + direction));
+}
   
-  function markPossiblePosition(p, player = 0, direction = 0) {
-    attribute = parseInt(p.row + player) + "-" + parseInt(p.column + direction);
-  
-    position = document.querySelector("[data-position='" + attribute + "']");
-    if (position) {
-        position.style.background = "green";
-        posNewPosition.push(new Piece(p.row + player, p.column + direction));
-    }
-  }
-  
+function reverse(player) {
+    return player === 1 ? -1 : 1;
+}
   function builBoard() {
     game.innerHTML = "";
     let black = 0;
@@ -171,48 +186,31 @@ function movePiece(e) {
   }
   
   function findPieceCaptured(p, player) {
-    let found = false;
-    if (board[p.row - 1][p.column - 1] === player && board[p.row - 2][p.column - 2] === 0) {
-        found = true;
-        newPosition = new Piece(p.row - 2, p.column - 2);
-        readyToMove = p;
-        markPossiblePosition(newPosition);
-        capturedPosition.push({ newPosition: newPosition, pieceCaptured: new Piece(p.row - 1, p.column - 1) });
-    }
+    capturedPosition = [];
+    let directions = [[player, 1], [player, -1], [-player, 1], [-player, -1]];
+
+    directions.forEach((direction) => {
+        let newRow = p.row + direction[0];
+        let newColumn = p.column + direction[1];
+        let jumpRow = p.row + 2 * direction[0];
+        let jumpColumn = p.column + 2 * direction[1];
+
+        if (0 <= newRow && newRow < board.length && 0 <= newColumn && newColumn < board[0].length) {
+            if (board[newRow][newColumn] === reverse(currentPlayer) && board[jumpRow][jumpColumn] === 0) {
+                capturedPosition.push({
+                    newPosition: new Piece(jumpRow, jumpColumn),
+                    pieceCaptured: new Piece(newRow, newColumn)
+                });
+            }
+        }
+    });
+
+    return capturedPosition.length > 0;
+}
   
-    if (board[p.row - 1][p.column + 1] === player && board[p.row - 2][p.column + 2] === 0) {
-        found = true;
-        newPosition = new Piece(p.row - 2, p.column + 2);
-        readyToMove = p;
-        markPossiblePosition(newPosition);
-        capturedPosition.push({ newPosition: newPosition, pieceCaptured: new Piece(p.row - 1, p.column + 1) });
-    }
-  
-    if (board[p.row + 1][p.column - 1] === player && board[p.row + 2][p.column - 2] === 0) {
-        found = true;
-        newPosition = new Piece(p.row + 2, p.column - 2);
-        readyToMove = p;
-        markPossiblePosition(newPosition);
-        capturedPosition.push({ newPosition: newPosition, pieceCaptured: new Piece(p.row + 1, p.column - 1) });
-    }
-  
-    if (board[p.row + 1][p.column + 1] === player && board[p.row + 2][p.column + 2] === 0) {
-        found = true;
-        newPosition = new Piece(p.row + 2, p.column + 2);
-        readyToMove = p;
-        markPossiblePosition(newPosition);
-        capturedPosition.push({ newPosition: newPosition, pieceCaptured: new Piece(p.row + 1, p.column + 1) });
-    }
-  
-    return found;
-  }
-  
-  function displayCounter(black, white) {
-    var blackContainer = document.getElementById("black-player-count-pieces");
-    var whiteContainer = document.getElementById("white-player-count-pieces");
-    blackContainer.innerHTML = black;
-    whiteContainer.innerHTML = white;
-  }
+function displayCurrentPlayer() {
+    console.log(`Current Player: ${currentPlayer === 1 ? 'White' : 'Black'}`);
+}
   
   function modalOpen(black) {
     document.getElementById("winner").innerHTML = black === 0 ? "White" : "Black";
@@ -227,3 +225,13 @@ function movePiece(e) {
   function reverse(player) {
     return player === -1 ? 1 : -1;
   }
+
+  function buildBoard() {
+    // Implement the logic to update the board display
+    console.log(board);
+}
+
+// Event listener for piece movement
+document.querySelectorAll('.cell .occupied').forEach(piece => {
+    piece.addEventListener('click', movePiece);
+});

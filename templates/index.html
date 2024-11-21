@@ -22,11 +22,13 @@
             {% for row in board %}
                 <div class="row">
                     {% for tile in row %}
-                        <div 
-                        {% if tile == 1 %} class="cell black"
-                        {% elif tile == -1 %} class="cell white"
-                        {% else %} class="cell empty"
-                        {% endif %}></div>
+                        <div class="cell {% if tile == 1 %}black{% elif tile == -1 %}white{% else %}empty{% endif %}">
+                            {% if tile == 1 %}
+                                <div class="occupied blackPiece"></div>
+                            {% elif tile == -1 %}
+                                <div class="occupied whitePiece"></div>
+                            {% endif %}
+                        </div>
                     {% endfor %}
                 </div>
             {% endfor %}
@@ -34,11 +36,11 @@
         <div class="counter">
             <div>
                 <div class="occupied whitePiece"></div>
-                <span id="white-player-count-pieces">10</span>
+                <span id="white-player-count-pieces">20</span>
             </div>
             <div>
                 <div class="occupied blackPiece"></div>
-                <span id="black-player-count-pieces">10</span>
+                <span id="black-player-count-pieces">20</span>
             </div>
         </div>
     </div>
@@ -56,6 +58,6 @@
         </div>
     </div>
 
-    <script src="https://checkers-game-cs399.s3.amazonaws.com/static/function.js"></script>
+    <script src="static/function.js"></script>
 </body>
 </html>
