@@ -26,7 +26,7 @@ def test():
     return "Hello World"
 
 # Route to get the game template
-@app.route('/', methods=['GET'])
+@app.route('/')
 def index():
     with open(INITIAL_BOARD_PATH, 'r') as f:
         game = json.load(f)
