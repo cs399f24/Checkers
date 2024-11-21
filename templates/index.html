@@ -22,10 +22,10 @@
             {% for row in board %}
                 <div class="row">
                     {% for tile in row %}
-                        <div class="cell {% if tile == 1 %}black{% elif tile == -1 %}white{% else %}empty{% endif %}">
-                            {% if tile == 1 %}
+                        <div class="cell {% if tile == -1 %}black{% elif tile == 1 %}white{% else %}empty{% endif %}">
+                            {% if tile == -1 %}
                                 <div class="occupied blackPiece"></div>
-                            {% elif tile == -1 %}
+                            {% elif tile == 1 %}
                                 <div class="occupied whitePiece"></div>
                             {% endif %}
                         </div>
