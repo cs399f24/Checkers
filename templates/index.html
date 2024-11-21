@@ -23,8 +23,8 @@
                 <div class="row">
                     {% for tile in row %}
                         <div 
-                        {% if tile == 1 %} class="cell black"
-                        {% elif tile == -1 %} class="cell white"
+                        {% if tile = 1 %} class="cell black"
+                        {% elif tile = -1 %} class="cell white"
                         {% else %} class="cell"
                         {% endif %}></div>
                     {% endfor %}
