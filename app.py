@@ -6,7 +6,7 @@ from botocore.exceptions import ClientError
 import json
 import os
 
-app = Flask(name)
+app = Flask(__name__)
 socketio = SocketIO(app)
 
 # Path to JSON file for initial board state
