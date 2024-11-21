@@ -48,5 +48,5 @@ def handle_connect():
 def handle_disconnect():
     print("Client disconnected")
 
-if __name == '__main':
+if __name__ == '__main':
     socketio.run(app, debug=True, host='0.0.0.0', port=8080)
