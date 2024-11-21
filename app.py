@@ -10,7 +10,7 @@ app = Flask(__name__)
 socketio = SocketIO(app)
 
 # Path to JSON file for initial board state
-INITIAL_BOARD_PATH = "static/inplay.json"
+INITIAL_BOARD_PATH = "https://checkers-game-cs399.s3.us-east-1.amazonaws.com/inplay.json"
 
 # S3 bucket URL for the game template
 bucket_url = "https://checkers-game-cs399.s3.amazonaws.com/templates/index.html"
@@ -26,7 +26,7 @@ def test():
     return "Hello World"
 
 # Route to get the game template
-@app.route('/')
+@app.route('/', methods=['GET'])
 def index():
     with open(INITIAL_BOARD_PATH, 'r') as f:
         game = json.load(f)
