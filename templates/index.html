@@ -18,8 +18,12 @@
         <div class="game" id="game">
             {% for row in board %}
                 <div class="row">
-                    {% for cell in row %}
-                        <div class="cell {% if tile == 1 %}black{% elif tile == -1 %}white{% endif %}"></div>
+                    {% for tile in row %}
+                        <div class="cell 
+                        {% if tile == 1 %} black
+                        {% elif tile == -1 %} white
+                        {% else %} empty
+                        {% endif %}"></div>
                     {% endfor %}
                 </div>
             {% endfor %}
