@@ -15,11 +15,6 @@ INITIAL_BOARD_PATH = "inplay.json"
 # S3 bucket URL for the game template
 bucket_url = "https://checkers-game-cs399.s3.amazonaws.com/templates/index.html"
 
-# S3 bucket name
-@app.route('/static/<path:path>')
-def static_files(path):
-    return send_from_directory('static', path)
-
 # Route to get the game template
 @app.route('/test')
 def test():
