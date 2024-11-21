@@ -120,7 +120,7 @@ body {
   box-sizing: border-box;
 }
 
-.cell .black {
+.game .cell .black {
  background-color: black;
 }
 
