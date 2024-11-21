@@ -1,29 +1,52 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
+from flask import Flask, Response, rendertemplate, sendfromdirectory
+from flasksocketio import SocketIO, emit
+import boto3
+import requests
+from botocore.exceptions import ClientError
+import json
+import os
 
-def create_app():
-    app = Flask(__name__)
-    CORS(app)
+app = Flask(name)
+socketio = SocketIO(app)
 
-    @app.route('/board', methods=['GET'])
-    def get_board():
-        board = {
-            "board": [
-                [0, -1, 0, -1, 0, -1, 0, -1],
-                [-1, 0, -1, 0, -1, 0, -1, 0],
-                [0, -1, 0, -1, 0, -1, 0, -1],
-                [-1, 0, -1, 0, -1, 0, -1, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 1, 0, 1, 0, 1, 0, 1],
-                [1, 0, 1, 0, 1, 0, 1, 0],
-                [0, 1, 0, 1, 0, 1, 0, 1],
-                [1, 0, 1, 0, 1, 0, 1, 0]
-            ]
-        }
-        return jsonify(board)
-    return app
+# Path to JSON file for initial board state
+INITIAL_BOARD_PATH = "static/inplay.json"
 
-if __name__ == '__main__':
-    app = create_app()
-    app.run(debug=True, port=8080, host='0.0.0.0')
+# S3 bucket URL for the game template
+bucket_url = "https://checkers-game-cs399.s3.amazonaws.com/templates/index.html"
+
+# S3 bucket name
+@app.route('/static/<path:path>')
+def static_files(path):
+    return send_from_directory('static', path)
+
+# Route to get the game template
+@app.route('/test')
+def test():
+    return "Hello World"
+
+# Route to get the game template
+@app.route('/')
+def index():
+    with open(INITIAL_BOARD_PATH, 'r') as f:
+        game = json.load(f)
+    board = game["board"]
+    return render_template('index.html', board=board)
+
+#Websocket to handl game updates
+@socketio.on('game_update')
+def handle_game_update(data):
+    emit('game_update', data, broadcast=True)
+
+# Websocket to handle chat messages
+@socketio.on('connect')
+def handle_connect():
+    print("Client connected")
+
+# Websocket to handle client disconnect
+@socketio.on('disconnect')
+def handle_disconnect():
+    print("Client disconnected")
+
+if __name == '__main':
+    socketio.run(app, debug=True, host='0.0.0.0', port=8080)
