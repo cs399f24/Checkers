@@ -1,99 +1,52 @@
-from flask import Flask, Response, render_template
-from flask_socketio import SocketIO
+from flask import Flask, Response, rendertemplate, sendfromdirectory
+from flasksocketio import SocketIO, emit
 import boto3
 import requests
 from botocore.exceptions import ClientError
 import json
 import os
 
-app = Flask(__name__)
+app = Flask(name)
 socketio = SocketIO(app)
 
+# Path to JSON file for initial board state
+INITIAL_BOARD_PATH = "static/inplay.json"
+
+# S3 bucket URL for the game template
 bucket_url = "https://checkers-game-cs399.s3.amazonaws.com/templates/index.html"
 
+# S3 bucket name
+@app.route('/static/<path:path>')
+def static_files(path):
+    return send_from_directory('static', path)
+
+# Route to get the game template
+@app.route('/test')
+def test():
+    return "Hello World"
+
+# Route to get the game template
 @app.route('/')
 def index():
-    # Fetch the HTML content from the S3 bucket
-    try:
-        response = requests.get(bucket_url)
-        response.raise_for_status()  # Raise an error for bad status codes
-        html_content = response.text  # Get the HTML content from the response
-        return Response(html_content, mimetype='text/html')  # Serve the HTML c>
-    except requests.RequestException as e:
-        return f"Error fetching HTML from S3: {str(e)}", 500
+    with open(INITIAL_BOARD_PATH, 'r') as f:
+        game = json.load(f)
+    board = game["board"]
+    return render_template('index.html', board=board)
 
+#Websocket to handl game updates
+@socketio.on('game_update')
+def handle_game_update(data):
+    emit('game_update', data, broadcast=True)
+
+# Websocket to handle chat messages
 @socketio.on('connect')
 def handle_connect():
     print("Client connected")
 
+# Websocket to handle client disconnect
 @socketio.on('disconnect')
 def handle_disconnect():
     print("Client disconnected")
 
-    # Initialize a session using Amazon DynamoDB
-# dynamodb = boto3.resource('dynamodb', region_name='us-east-1',  )
-
-# # Function to create the DynamoDB table
-# def create_table():
-#     table = dynamodb.create_table(
-#         TableName='checkers-game',
-#         KeySchema=[
-#             {
-#                 'AttributeName': 'GameID',
-#                 'KeyType': 'HASH'  # Partition key
-#             }
-#         ],
-#         AttributeDefinitions=[
-#             {
-#                 'AttributeName': 'GameID',
-#                 'AttributeType': 'S'  # String
-#             }
-#         ],
-#         ProvisionedThroughput={
-#             'ReadCapacityUnits': 5,
-#             'WriteCapacityUnits': 5
-#         }
-#     )
-    
-#     # Wait until the table exists.
-#     table.meta.client.get_waiter('table_exists').wait(TableName='checkers-game')
-#     print("Table created successfully.")
-
-# # Function to update the game state
-# def update_game(game_id, board_state, last_move_by):
-#     table = dynamodb.Table('checkers-game', region_name='us-east-1')
-    
-#     next_turn = 'Player2' if last_move_by == 'Player1' else 'Player1'
-    
-#     try:
-#         response = table.update_item(
-#             Key={
-#                 'GameID': game_id
-#             },
-#             UpdateExpression='SET BoardState = :boardState, LastMoveBy = :lastMoveBy, CurrentTurn = :nextTurn',
-#             ExpressionAttributeValues={
-#                 ':boardState': board_state,
-#                 ':lastMoveBy': last_move_by,
-#                 ':nextTurn': next_turn
-#             },
-#             ReturnValues="UPDATED_NEW"
-#         )
-#         print("Game updated successfully:", response)
-#     except ClientError as e:
-#         print("Error updating game:", e.response['Error']['Message'])
-
-# # Function to retrieve the current game state
-# def get_game(game_id):
-#     table = dynamodb.Table('checkers-game', region_name='us-east-1')
-    
-#     try:
-#         response = table.get_item(Key={'GameID': game_id})
-#         if 'Item' in response:
-#             print("Game data:", json.dumps(response['Item'], indent=4))
-#         else:
-#             print("Game not found.")
-#     except ClientError as e:
-#         print("Error retrieving game:", e.response['Error']['Message'])
-
-if __name__ == '__main__':
+if __name == '__main':
     socketio.run(app, debug=True, host='0.0.0.0', port=8080)
