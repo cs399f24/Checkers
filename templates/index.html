@@ -17,16 +17,16 @@
         </div>
 
         <pre>{{ board | tojson }}</pre>
-        
+
         <div class="game" id="game">
             {% for row in board %}
                 <div class="row">
                     {% for tile in row %}
-                        <div class="cell 
-                        {% if tile == 1 %} black
-                        {% elif tile == -1 %} white
-                        {% else %} empty
-                        {% endif %}"></div>
+                        <div 
+                        {% if tile == 1 %} class="cell black"
+                        {% elif tile == -1 %} class="cell white"
+                        {% else %} class="cell"
+                        {% endif %}></div>
                     {% endfor %}
                 </div>
             {% endfor %}
