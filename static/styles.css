@@ -91,7 +91,7 @@ body {
   background-color: white;
 }
 
-.cell {
+.cell.empty {
   background-color: gray;
   width: 50vh;
   height: 90vw;
