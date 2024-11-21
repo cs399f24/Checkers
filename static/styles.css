@@ -51,11 +51,23 @@ body {
 
 
 .game {
-  background-color: #4c382e;
+  /* background-color: #4c382e;
   width: 500px;
   height: 500px;
   display: flex;
+  flex-direction: column; */
+  display: flex;
   flex-direction: column;
+  width: 500px;
+  height: 500px;
+  margin: 0 auto;
+  border: 2px solid #000;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
 }
 
 .game .row {
@@ -96,6 +108,15 @@ body {
 
 .readyToMove {
   background-color: green;
+}
+
+.cell {
+  width: 10%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
 }
 
 .cell.black {
