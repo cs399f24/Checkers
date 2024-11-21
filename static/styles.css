@@ -98,6 +98,18 @@ body {
   background-color: green;
 }
 
+.cell.black {
+ background-color: black;
+}
+
+.cell.white {
+  background-color: white;
+}
+
+.cell.empty {
+  background-color: gray;
+}
+
 /* modal style */
 *{
   margin: 0;
