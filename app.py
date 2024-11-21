@@ -1,5 +1,5 @@
 from flask import Flask, Response, render_template, send_from_directory
-from flasksocketio import SocketIO, emit
+from flask_socketio import SocketIO, emit
 import boto3
 import requests
 from botocore.exceptions import ClientError
