@@ -66,9 +66,9 @@ body {
 }
 
 .row {
-  display: flex;
   flex-direction: row;
   flex: 1;
+
 }
 
 .game .row {
