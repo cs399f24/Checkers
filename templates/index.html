@@ -30,6 +30,17 @@
                     {% endfor %}
                 </div>
             {% endfor %}
+            {% for col in board %}
+                <div class="col">
+                    {% for tile in row %}
+                        <div 
+                        {% if tile == 1 %} class="cell black"
+                        {% elif tile == -1 %} class="cell white"
+                        {% else %} class="cell"
+                        {% endif %}></div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
         </div>
         <div class="counter">
             <div>
