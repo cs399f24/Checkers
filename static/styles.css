@@ -85,14 +85,10 @@ body {
 /* Specific cell colors */
 .cell.black {
   background-color: black;
-  width: 50vh;
-  height: 50vw;
 }
 
 .cell.white {
   background-color: white;
-  width: 50vh;
-  height: 50vw;
 }
 
 .cell {
