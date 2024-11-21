@@ -1,4 +1,4 @@
-from flask import Flask, Response, rendertemplate, sendfromdirectory
+from flask import Flask, Response, render_template, send_from_directory
 from flasksocketio import SocketIO, emit
 import boto3
 import requests
