@@ -29,6 +29,8 @@ def index():
     # board = game["board"]
     return render_template('index.html', board=board_data['board'])
 
+
+
 #Websocket to handl game updates
 @socketio.on('game_update')
 def handle_game_update(data):
