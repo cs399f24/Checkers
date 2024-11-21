@@ -120,15 +120,15 @@ body {
   box-sizing: border-box;
 }
 
-.cell.black {
+.cell .black {
  background-color: black;
 }
 
-.cell.white {
+.cell .white {
   background-color: white;
 }
 
-.cell.empty {
+.cell .empty {
   background-color: gray;
 }
 
