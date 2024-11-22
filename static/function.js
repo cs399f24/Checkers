@@ -195,7 +195,7 @@ function buildBoard() {
             piece.setAttribute("column", j);
             piece.setAttribute("data-position", `${i}-${j}`);
             console.log(`Binding click event for piece at (${i}, ${j})`); // Debug
-            piece.addEventListener("click", movePiece($occupied));
+            piece.addEventListener("click", movePiece());
             // piece.addEventListener("click", (e) => {
             //     const row = parseInt(e.target.getAttribute("row"));
             //     const column = parseInt(e.target.getAttribute("column"));
