@@ -1,4 +1,3 @@
-const socket = io(); // Initialize socket globally
 let board, currentPlayer, capturedPosition = [], posNewPosition = [], readyToMove = null;
 
 // Fetch the initial board state
@@ -54,6 +53,7 @@ function moveThePiece(newPosition) {
         buildBoard();
 
         // Notify the server of the move
+        const socket = io();
         socket.emit('game_update', { board: board, currentPlayer: currentPlayer });
     }
 }
