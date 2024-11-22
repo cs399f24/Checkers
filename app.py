@@ -30,8 +30,8 @@ def test():
 def index():
     with open(INITIAL_BOARD_PATH, 'r') as f:
         game = json.load(f)
-    board = game["board"]
-    return render_template('index.html', board=board)
+    # board = game["board"]
+    return render_template('index.html', board = game["board"])
 
 #Websocket to handl game updates
 @socketio.on('game_update')
