@@ -9,6 +9,13 @@ fetch('/static/checkersboard.json')
         buildBoard();
     });
 
+    const socket = io();
+    socket.on('game_update', (data) => {
+        board = data.board;
+        currentPlayer = data.currentPlayer;
+        buildBoard();
+    });
+
 // Piece class to encapsulate row and column
 class Piece {
     constructor(row, column) {
