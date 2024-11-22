@@ -97,7 +97,7 @@ function moveThePiece(newPosition) {
     buildBoard();
 
     //notify server of move
-    const socket = iop();
+    const socket = io();
     socket.emit('game_update', { board: board, currentPlayer: currentPlayer });
 }
 
