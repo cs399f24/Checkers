@@ -120,7 +120,7 @@ function markPossiblePosition(piece, player, direction) {
 function reverse(player) {
     return player === 1 ? -1 : 1;
 }
-  function builBoard() {
+  function buildBoard() {
     game.innerHTML = "";
     let black = 0;
     let white = 0;
@@ -230,10 +230,7 @@ function displayCurrentPlayer() {
     return player === -1 ? 1 : -1;
   }
 
-  function buildBoard() {
-    // Implement the logic to update the board display
-    console.log(board);
-}
+
 
 // Event listener for piece movement
 document.querySelectorAll('.cell .occupied').forEach(piece => {
