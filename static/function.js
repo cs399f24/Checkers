@@ -3,7 +3,7 @@ fetch('/static/checkersboard.json')
     .then(data => {
         board = data.board;
         currentPlayer = data.currentPlayer;
-        buildBoard();
+        buildBoard(displayCounter);
     });
 let currentPlayer = 1; // Assuming 1 is one player and -1 is the other
 let capturedPosition = [];
