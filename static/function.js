@@ -1,4 +1,10 @@
-let board = JSON.parse(document.getElementById('board-data').textContent);
+fetch('/static/checkersboard.json')
+    .then(response => response.json())
+    .then(data => {
+        board = data.board;
+        currentPlayer = data.currentPlayer;
+        buildBoard();
+    });
 let currentPlayer = 1; // Assuming 1 is one player and -1 is the other
 let capturedPosition = [];
 let posNewPosition = [];
