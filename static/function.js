@@ -23,7 +23,17 @@ class Piece {
 
 // Function to handle moving a piece
 function moveThePiece(newPosition) {
-    if (!readyToMove) return;
+    if (!readyToMove) {
+        console.error("No piece selected to move");
+        return;
+    }
+    const isValidMove = posNewPosition.some(pos => pos.compare(newPosition));
+    console.log("Attempting to move ot (${newPosition.row}. ${newPosition.column}). Valid: ${isValidMove}"); // Debug
+
+    if (isValidMove) {
+        console.error("Invalid move");
+        return;
+    }
 
     const { row, column } = readyToMove;
 
@@ -102,16 +112,22 @@ function enableToMove(p) {
 
 // Determine possible moves
 function findPossibleNewPosition(piece, player) {
-    if (board[piece.row + player][piece.column + 1] === 0) {
+    posNewPosition = []; // Clear previous positions
+    console.log(`Calculating possible moves for piece at (${piece.row}, ${piece.column})`); // Debug
+
+    if (board[piece.row + player]?.[piece.column + 1] === 0) {
         readyToMove = piece;
         markPossiblePosition(piece, player, 1);
     }
 
-    if (board[piece.row + player][piece.column - 1] === 0) {
+    if (board[piece.row + player]?.[piece.column - 1] === 0) {
         readyToMove = piece;
         markPossiblePosition(piece, player, -1);
     }
+
+    console.log("Possible new positions:", posNewPosition); // Debug
 }
+
 
 // Mark possible move positions
 function markPossiblePosition(piece, player, direction) {
@@ -149,11 +165,13 @@ function buildBoard() {
             piece.setAttribute("row", i);
             piece.setAttribute("column", j);
             piece.setAttribute("data-position", `${i}-${j}`);
+            console.log("Binding click event for piece at (${i}, ${j})"); // Debug
             piece.addEventListener("click", (e) => {
                 const row = parseInt(e.target.getAttribute("row"));
                 const column = parseInt(e.target.getAttribute("column"));
                 if (currentPlayer === board[row][column]) {
                     readyToMove = new Piece(row, column); // Select piece
+                    console.log("Piece selected at (${row}, ${column})"); // Debug
                     findPossibleNewPosition(readyToMove, reverse(currentPlayer));
                 } else if (readyToMove) {
                     moveThePiece(new Piece(row, column)); // Attempt move
