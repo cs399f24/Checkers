@@ -80,7 +80,6 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f0f0f0; /* Default color for empty cells */
   border: 1px solid #ccc; /* cell border color */
   box-sizing: border-box;
 }
