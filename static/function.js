@@ -21,27 +21,27 @@ class Piece {
     }
 }
 
-function movePiece(e) {
-    let piece = e.target;
-    const row = parseInt(piece.getAttribute("data-row"));
-    const column = parseInt(piece.getAttribute("data-column"));
-    let p = new Piece(row, column);
+// function movePiece(e) {
+//     let piece = e.target;
+//     const row = parseInt(piece.getAttribute("data-row"));
+//     const column = parseInt(piece.getAttribute("data-column"));
+//     let p = new Piece(row, column);
 
-    if (capturedPosition.length > 0) {
-        enableToCapture(p);
-    } else {
-        if (posNewPosition.length > 0) {
-            enableToMove(p);
-        }
-    }
+//     if (capturedPosition.length > 0) {
+//         enableToCapture(p);
+//     } else {
+//         if (posNewPosition.length > 0) {
+//             enableToMove(p);
+//         }
+//     }
 
-    if (currentPlayer === board[row][column]) {
-        let player = reverse(currentPlayer);
-        if (!findPieceCaptured(p, player)) {
-            findPossibleNewPosition(p, player);
-        }
-    }
-}
+//     if (currentPlayer === board[row][column]) {
+//         let player = reverse(currentPlayer);
+//         if (!findPieceCaptured(p, player)) {
+//             findPossibleNewPosition(p, player);
+//         }
+//     }
+// }
 
 function enableToCapture(p) {
     let find = false;
