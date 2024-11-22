@@ -128,6 +128,11 @@ function buildBoard() {
     const game = document.getElementById('game');
     game.innerHTML = ""; // Clear the board
 
+    // Clear highlights
+    document.querySelectorAll('.highlight').forEach(cell => {
+        cell.classList.remove('highlight');
+    });
+
     let black = 0, white = 0;
 
     for (let i = 0; i < board.length; i++) {
@@ -147,7 +152,12 @@ function buildBoard() {
             piece.addEventListener("click", (e) => {
                 const row = parseInt(e.target.getAttribute("row"));
                 const column = parseInt(e.target.getAttribute("column"));
-                moveThePiece(new Piece(row, column));
+                if (currentPlayer === board[row][column]) {
+                    readyToMove = new Piece(row, column); // Select piece
+                    findPossibleNewPosition(readyToMove, reverse(currentPlayer));
+                } else if (readyToMove) {
+                    moveThePiece(new Piece(row, column)); // Attempt move
+                }
             });
 
             col.setAttribute("class", `column ${caseType}`);
@@ -166,6 +176,7 @@ function buildBoard() {
         modalOpen(black);
     }
 }
+
 
 // Display the current player
 function displayCurrentPlayer() {
