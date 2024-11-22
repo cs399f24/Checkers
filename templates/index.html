@@ -61,6 +61,17 @@
             </div>
         </div>
     </div>
+    <script>
+        //listen for updates from server
+        const socket = io();
+
+        socket.on('game_update', (data) => {
+            //updating board state and rebuilding UI
+            board = data.board;
+            currentPlayer = data.currentPlayer;
+            buildBoard();
+        });
+    </script>
 
     <script src="static/function.js"></script>
 </body>
