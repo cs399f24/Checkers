@@ -21,7 +21,7 @@ class Piece {
     }
 }
 
-// function movePiece(e) {
+// function moveThePiece(e) {
 //     let piece = e.target;
 //     const row = parseInt(piece.getAttribute("data-row"));
 //     const column = parseInt(piece.getAttribute("data-column"));
@@ -162,7 +162,7 @@ function reverse(player) {
             piece.setAttribute("column", j);
             piece.setAttribute("data-position", i + "-" + j);
   
-            piece.addEventListener("click", movePiece);
+            piece.addEventListener("click", moveThePiece);
   
             col.appendChild(piece);
   
@@ -240,5 +240,5 @@ function displayCurrentPlayer() {
 
 // Event listener for piece movement
 document.querySelectorAll('.cell .occupied').forEach(piece => {
-    piece.addEventListener('click', movePiece);
+    piece.addEventListener('click', moveThePiece);
 });
