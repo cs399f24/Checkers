@@ -80,33 +80,38 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid black;
+  background-color: #f0f0f0; /* Default color for empty cells */
+  border: 1px solid #ccc; /* cell border color */
   box-sizing: border-box;
 }
 
-.cell .occupied {
-  width: 30px;
+.occupied {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  /* width: 30px;
   height: 30px;
   border-radius: 50%;
-  background-color: #000; /* Default color for black pieces */
+  background-color: #000; Default color for black pieces */
 }
 
-.cell .whitePiece {
+.occupied.whitePiece {
   background-color: #fff; /* Color for white pieces */
+  border-radius: 1px solid #000; /* piece border color */
 }
 
-.cell .blackPiece {
+.occupied.blackPiece {
   background-color: #000; /* Color for black pieces */
 }
 
-/* Specific cell colors */
+/* Specific cell colors
 .cell.black {
   background-color: black;
 }
 
 .cell.white {
   background-color: white;
-}
+} */
 
 /* .cell.empty {
   background-color: gray;
