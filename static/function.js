@@ -95,6 +95,10 @@ function moveThePiece(newPosition) {
 
     displayCurrentPlayer();
     buildBoard();
+
+    //notify server of move
+    const socket = iop();
+    socket.emit('game_update', { board: board, currentPlayer: currentPlayer });
 }
 
 function findPossibleNewPosition(piece, player) {
