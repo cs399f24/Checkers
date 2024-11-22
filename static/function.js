@@ -1,15 +1,16 @@
+const socket = io(); // Initialize socket globally
+let board, currentPlayer, capturedPosition = [], posNewPosition = [], readyToMove = null;
+
+// Fetch the initial board state
 fetch('/static/checkersboard.json')
     .then(response => response.json())
     .then(data => {
         board = data.board;
         currentPlayer = data.currentPlayer;
-        buildBoard(displayCounter);
+        buildBoard();
     });
-let currentPlayer = 1; // Assuming 1 is one player and -1 is the other
-let capturedPosition = [];
-let posNewPosition = [];
-let readyToMove = null;
 
+// Piece class to encapsulate row and column
 class Piece {
     constructor(row, column) {
         this.row = row;
@@ -21,32 +22,46 @@ class Piece {
     }
 }
 
-// function moveThePiece(e) {
-//     let piece = e.target;
-//     const row = parseInt(piece.getAttribute("data-row"));
-//     const column = parseInt(piece.getAttribute("data-column"));
-//     let p = new Piece(row, column);
+// Function to handle moving a piece
+function moveThePiece(newPosition) {
+    if (!readyToMove) return;
 
-//     if (capturedPosition.length > 0) {
-//         enableToCapture(p);
-//     } else {
-//         if (posNewPosition.length > 0) {
-//             enableToMove(p);
-//         }
-//     }
+    const { row, column } = readyToMove;
 
-//     if (currentPlayer === board[row][column]) {
-//         let player = reverse(currentPlayer);
-//         if (!findPieceCaptured(p, player)) {
-//             findPossibleNewPosition(p, player);
-//         }
-//     }
-// }
+    // Check if the current player owns the piece being moved
+    if (currentPlayer === board[row][column]) {
+        let opponent = reverse(currentPlayer);
 
+        // Determine valid moves or captures
+        if (!findPieceCaptured(readyToMove, opponent)) {
+            findPossibleNewPosition(readyToMove, opponent);
+        }
+
+        // Update the board
+        board[newPosition.row][newPosition.column] = currentPlayer;
+        board[row][column] = 0;
+
+        // Reset state
+        readyToMove = null;
+        posNewPosition = [];
+        capturedPosition = [];
+
+        // Switch to the other player
+        currentPlayer = reverse(currentPlayer);
+
+        // Update the UI
+        displayCurrentPlayer();
+        buildBoard();
+
+        // Notify the server of the move
+        socket.emit('game_update', { board: board, currentPlayer: currentPlayer });
+    }
+}
+
+// Enable capturing logic
 function enableToCapture(p) {
-    let find = false;
-    let pos = null;
-    let old = null;
+    let find = false, pos = null, old = null;
+
     capturedPosition.forEach((element) => {
         if (element.newPosition.compare(p)) {
             find = true;
@@ -61,6 +76,7 @@ function enableToCapture(p) {
         board[readyToMove.row][readyToMove.column] = 0;
         board[old.row][old.column] = 0;
 
+        // Reset state
         readyToMove = null;
         capturedPosition = [];
         posNewPosition = [];
@@ -73,14 +89,9 @@ function enableToCapture(p) {
     }
 }
 
+// Enable moving logic
 function enableToMove(p) {
-    let find = false;
-    posNewPosition.forEach((pos) => {
-        if (pos.compare(p)) {
-            find = true;
-            return;
-        }
-    });
+    let find = posNewPosition.some(pos => pos.compare(p));
 
     if (find) {
         moveThePiece(p);
@@ -88,25 +99,8 @@ function enableToMove(p) {
         buildBoard();
     }
 }
-  
-function moveThePiece(newPosition) {
-    board[newPosition.row][newPosition.column] = currentPlayer;
-    board[readyToMove.row][readyToMove.column] = 0;
 
-    readyToMove = null;
-    posNewPosition = [];
-    capturedPosition = [];
-
-    currentPlayer = reverse(currentPlayer);
-
-    displayCurrentPlayer();
-    buildBoard();
-
-    //notify server of move
-    const socket = io();
-    socket.emit('game_update', { board: board, currentPlayer: currentPlayer });
-}
-
+// Determine possible moves
 function findPossibleNewPosition(piece, player) {
     if (board[piece.row + player][piece.column + 1] === 0) {
         readyToMove = piece;
@@ -119,126 +113,109 @@ function findPossibleNewPosition(piece, player) {
     }
 }
 
+// Mark possible move positions
 function markPossiblePosition(piece, player, direction) {
     posNewPosition.push(new Piece(piece.row + player, piece.column + direction));
 }
-  
+
+// Reverse the player turn
 function reverse(player) {
     return player === 1 ? -1 : 1;
 }
-  function buildBoard() {
-    game.innerHTML = "";
-    let black = 0;
-    let white = 0;
+
+// Build the game board
+function buildBoard() {
+    const game = document.getElementById('game');
+    game.innerHTML = ""; // Clear the board
+
+    let black = 0, white = 0;
+
     for (let i = 0; i < board.length; i++) {
-        const element = board[i];
         let row = document.createElement("div");
         row.setAttribute("class", "row");
-  
-        for (let j = 0; j < element.length; j++) {
-            const elmt = element[j];
+
+        for (let j = 0; j < board[i].length; j++) {
             let col = document.createElement("div");
             let piece = document.createElement("div");
-            let caseType = "";
-            let occupied = "";
-  
-            if (i % 2 === 0) {
-                caseType = j % 2 === 0 ? "Whitecase" : "blackCase";
-            } else {
-                caseType = j % 2 !== 0 ? "Whitecase" : "blackCase";
-            }
-  
-            if (board[i][j] === 1) {
-                occupied = "whitePiece";
-            } else if (board[i][j] === -1) {
-                occupied = "blackPiece";
-            } else {
-                occupied = "empty";
-            }
-  
-            piece.setAttribute("class", "occupied " + occupied);
-  
+            let caseType = (i % 2 === 0) ? (j % 2 === 0 ? "Whitecase" : "blackCase") : (j % 2 !== 0 ? "Whitecase" : "blackCase");
+            let occupied = board[i][j] === 1 ? "whitePiece" : board[i][j] === -1 ? "blackPiece" : "empty";
+
+            piece.setAttribute("class", `occupied ${occupied}`);
             piece.setAttribute("row", i);
             piece.setAttribute("column", j);
-            piece.setAttribute("data-position", i + "-" + j);
-  
-            piece.addEventListener("click", moveThePiece);
-  
+            piece.setAttribute("data-position", `${i}-${j}`);
+            piece.addEventListener("click", (e) => {
+                const row = parseInt(e.target.getAttribute("row"));
+                const column = parseInt(e.target.getAttribute("column"));
+                moveThePiece(new Piece(row, column));
+            });
+
+            col.setAttribute("class", `column ${caseType}`);
             col.appendChild(piece);
-  
-            col.setAttribute("class", "column " + caseType);
             row.appendChild(col);
-  
-            if (board[i][j] === -1) {
-                black++;
-            } else if (board[i][j] === 1) {
-                white++;
-            }
-  
-            displayCounter(black, white);
+
+            if (board[i][j] === -1) black++;
+            if (board[i][j] === 1) white++;
         }
-  
         game.appendChild(row);
     }
-  
+
+    displayCounter(black, white);
+
     if (black === 0 || white === 0) {
         modalOpen(black);
     }
-  }
-  
-  function displayCurrentPlayer() {
-    var container = document.getElementById("next-player");
-    if (container.classList.contains("whitePiece")) {
-        container.setAttribute("class", "occupied blackPiece");
-    } else {
-        container.setAttribute("class", "occupied whitePiece");
-    }
-  }
-  
-  function findPieceCaptured(p, player) {
+}
+
+// Display the current player
+function displayCurrentPlayer() {
+    const container = document.getElementById("next-player");
+    container.setAttribute("class", `occupied ${currentPlayer === 1 ? "whitePiece" : "blackPiece"}`);
+}
+
+// Display the counters for each player's pieces
+function displayCounter(black, white) {
+    document.getElementById("white-player-count-pieces").textContent = white;
+    document.getElementById("black-player-count-pieces").textContent = black;
+}
+
+// Open the modal for game over
+function modalOpen(black) {
+    const modal = document.getElementById("easyModal");
+    document.getElementById("winner").textContent = black === 0 ? "White" : "Black";
+    document.getElementById("loser").textContent = black !== 0 ? "White" : "Black";
+    modal.classList.add("effect");
+}
+
+// Close the modal
+function modalClose() {
+    const modal = document.getElementById("easyModal");
+    modal.classList.remove("effect");
+}
+
+// Find pieces that can be captured
+function findPieceCaptured(p, player) {
     capturedPosition = [];
     let directions = [[player, 1], [player, -1], [-player, 1], [-player, -1]];
 
-    directions.forEach((direction) => {
-        let newRow = p.row + direction[0];
-        let newColumn = p.column + direction[1];
-        let jumpRow = p.row + 2 * direction[0];
-        let jumpColumn = p.column + 2 * direction[1];
+    directions.forEach(([dRow, dCol]) => {
+        let newRow = p.row + dRow;
+        let newColumn = p.column + dCol;
+        let jumpRow = p.row + 2 * dRow;
+        let jumpColumn = p.column + 2 * dCol;
 
-        if (0 <= newRow && newRow < board.length && 0 <= newColumn && newColumn < board[0].length) {
-            if (board[newRow][newColumn] === reverse(currentPlayer) && board[jumpRow][jumpColumn] === 0) {
-                capturedPosition.push({
-                    newPosition: new Piece(jumpRow, jumpColumn),
-                    pieceCaptured: new Piece(newRow, newColumn)
-                });
-            }
+        if (
+            newRow >= 0 && newRow < board.length &&
+            newColumn >= 0 && newColumn < board[0].length &&
+            board[newRow][newColumn] === reverse(currentPlayer) &&
+            board[jumpRow]?.[jumpColumn] === 0
+        ) {
+            capturedPosition.push({
+                newPosition: new Piece(jumpRow, jumpColumn),
+                pieceCaptured: new Piece(newRow, newColumn),
+            });
         }
     });
 
     return capturedPosition.length > 0;
 }
-  
-function displayCurrentPlayer() {
-    console.log(`Current Player: ${currentPlayer === 1 ? 'White' : 'Black'}`);
-}
-  
-  function modalOpen(black) {
-    document.getElementById("winner").innerHTML = black === 0 ? "White" : "Black";
-    document.getElementById("loser").innerHTML = black !== 0 ? "White" : "Black";
-    modal.classList.add("effect");
-  }
-  
-  function modalClose() {
-    modal.classList.remove("effect");
-  }
-  
-  function reverse(player) {
-    return player === -1 ? 1 : -1;
-  }
-
-
-
-// Event listener for piece movement
-document.querySelectorAll('.cell .occupied').forEach(piece => {
-    piece.addEventListener('click', moveThePiece);
-});
