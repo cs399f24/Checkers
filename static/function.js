@@ -144,11 +144,6 @@ function buildBoard() {
     const game = document.getElementById('game');
     game.innerHTML = ""; // Clear the board
 
-    // Clear highlights
-    document.querySelectorAll('.highlight').forEach(cell => {
-        cell.classList.remove('highlight');
-    });
-
     let black = 0, white = 0;
 
     for (let i = 0; i < board.length; i++) {
@@ -165,13 +160,14 @@ function buildBoard() {
             piece.setAttribute("row", i);
             piece.setAttribute("column", j);
             piece.setAttribute("data-position", `${i}-${j}`);
-            console.log("Binding click event for piece at (${i}, ${j})"); // Debug
+            console.log(`Binding click event for piece at (${i}, ${j})`); // Debug
             piece.addEventListener("click", (e) => {
                 const row = parseInt(e.target.getAttribute("row"));
                 const column = parseInt(e.target.getAttribute("column"));
+
                 if (currentPlayer === board[row][column]) {
                     readyToMove = new Piece(row, column); // Select piece
-                    console.log("Piece selected at (${row}, ${column})"); // Debug
+                    console.log(`Piece selected at (${row}, ${column})`); // Debug
                     findPossibleNewPosition(readyToMove, reverse(currentPlayer));
                 } else if (readyToMove) {
                     moveThePiece(new Piece(row, column)); // Attempt move
@@ -194,6 +190,7 @@ function buildBoard() {
         modalOpen(black);
     }
 }
+
 
 
 // Display the current player
