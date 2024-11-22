@@ -67,6 +67,7 @@
 
         socket.on('game_update', (data) => {
             //updating board state and rebuilding UI
+            console.log("Received game update", data); //debug
             board = data.board;
             currentPlayer = data.currentPlayer;
             buildBoard();
