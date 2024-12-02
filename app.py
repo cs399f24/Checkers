@@ -1,16 +1,16 @@
-from flask import Flask, Response, rendertemplate, sendfromdirectory
-from flasksocketio import SocketIO, emit
+from flask import Flask, Response, render_template, send_from_directory
+from flask_socketio import SocketIO, emit
 import boto3
 import requests
 from botocore.exceptions import ClientError
 import json
 import os
 
-app = Flask(name)
+app = Flask(__name__)
 socketio = SocketIO(app)
 
 # Path to JSON file for initial board state
-INITIAL_BOARD_PATH = "static/inplay.json"
+INITIAL_BOARD_PATH = "static/checkersboard.json"
 
 # S3 bucket URL for the game template
 bucket_url = "https://checkers-game-cs399.s3.amazonaws.com/templates/index.html"
@@ -30,8 +30,8 @@ def test():
 def index():
     with open(INITIAL_BOARD_PATH, 'r') as f:
         game = json.load(f)
-    board = game["board"]
-    return render_template('index.html', board=board)
+    # board = game["board"]
+    return render_template('index.html', board = game["board"])
 
 #Websocket to handl game updates
 @socketio.on('game_update')
@@ -48,5 +48,5 @@ def handle_connect():
 def handle_disconnect():
     print("Client disconnected")
 
-if __name == '__main':
+if __name__ == '__main__':
     socketio.run(app, debug=True, host='0.0.0.0', port=8080)

@@ -14,6 +14,7 @@ body {
   justify-content: center;
   flex-direction: column;
   gap: 30px;
+  overflow: auto;
 }
 
 .counter {
@@ -36,18 +37,19 @@ body {
   gap: 15px;
   font-size: 20px;
 }
-.occupied {
+/* .occupied {
   width: 30px;
   height: 30px;
   border-radius: 50%;
+  background-color: #000;
 }
-.occupied.whitePiece {
+.whitePiece {
   background-color: white;
 }
 
-.occupied.blackPiece {
+.blackPiece {
   background-color: black;
-}
+} */
 
 
 .game {
@@ -56,7 +58,63 @@ body {
   height: 500px;
   display: flex;
   flex-direction: column;
+  /* display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 500px; /* Adjust as needed */
+  /* margin: auto;
+  border: 2px solid #000; */ 
 }
+
+/* Styles for each row */
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+/* Styles for individual cells */
+.cell {
+  width: 50px; /* Adjust size as needed */
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ccc; /* cell border color */
+  box-sizing: border-box;
+}
+
+.occupied {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  /* width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #000; Default color for black pieces */
+}
+
+.occupied.whitePiece {
+  background-color: #fff; /* Color for white pieces */
+  border-radius: 1px solid #000; /* piece border color */
+}
+
+.occupied.blackPiece {
+  background-color: #000; /* Color for black pieces */
+}
+
+/* Specific cell colors
+.cell.black {
+  background-color: black;
+}
+
+.cell.white {
+  background-color: white;
+} */
+
+/* .cell.empty {
+  background-color: gray;
+} */
 
 .game .row {
   width: 100%;

@@ -15,11 +15,24 @@
             <div class="occupied whitePiece" id="next-player"></div>
             Player
         </div>
+
+        <pre>{{ board | tojson }}</pre>
+
         <div class="game" id="game">
             {% for row in board %}
                 <div class="row">
-                    {% for cell in row %}
-                        <div class="cell {% if tile == 1 %}black{% elif tile == -1 %}white{% endif %}"></div>
+                    {% for tile in row %}
+                        <div class="cell 
+                        {% if tile == -1 %} black
+                        {% elif tile == 1 %} white
+                        {% else %} empty
+                        {% endif %}">
+                            {% if tile == -1 %}
+                                <div class="occupied blackPiece"></div>
+                            {% elif tile == 1 %}
+                                <div class="occupied whitePiece"></div>
+                            {% endif %}
+                        </div>
                     {% endfor %}
                 </div>
             {% endfor %}
@@ -27,11 +40,11 @@
         <div class="counter">
             <div>
                 <div class="occupied whitePiece"></div>
-                <span id="white-player-count-pieces">10</span>
+                <span id="white-player-count-pieces">20</span>
             </div>
             <div>
                 <div class="occupied blackPiece"></div>
-                <span id="black-player-count-pieces">10</span>
+                <span id="black-player-count-pieces">20</span>
             </div>
         </div>
     </div>
@@ -48,6 +61,18 @@
             </div>
         </div>
     </div>
+    <script>
+        //listen for updates from server
+        const socket = io();
+
+        socket.on('game_update', (data) => {
+            //updating board state and rebuilding UI
+            console.log("Received game update", data); //debug
+            board = data.board;
+            currentPlayer = data.currentPlayer;
+            buildBoard();
+        });
+    </script>
 
     <script src="https://checkers-game-cs399.s3.amazonaws.com/static/function.js"></script>
 </body>
