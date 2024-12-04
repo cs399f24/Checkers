@@ -77,7 +77,7 @@
     <script>
         const fetchBoard = async () => {
             try{
-                const response = await fetch('http://<YOUR-ELASTIC-IP>:8080/getBoard');
+                const response = await fetch('http://3.217.128.9:8080/getBoard');
                 const data = await response.json();
                 const board = JSON.parse(data.board); //parse the board string to JSON
                 console.log("Loaded Board:", board);
