@@ -16,7 +16,7 @@ dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 INITIAL_BOARD_PATH = "static/checkersboard.json"
 
 # S3 bucket URL for the game template
-bucket_url = "https://checkers-game-cs399.s3.amazonaws.com/templates/index.html"
+bucket_url = "https://raw.githubusercontent.com/cs399f24/Checkers/development/templates/index.html"
 
 # S3 bucket name
 @app.route('/static/<path:path>')
