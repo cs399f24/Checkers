@@ -13,7 +13,7 @@ socketio = SocketIO(app)
 dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 
 # Path to JSON file for initial board state
-INITIAL_BOARD_PATH = "../static/checkersboard.json"
+INITIAL_BOARD_PATH = "static/checkersboard.json"
 
 # S3 bucket URL for the game template
 bucket_url = "https://raw.githubusercontent.com/cs399f24/Checkers/development/templates/index.html"
