@@ -1,4 +1,4 @@
-from flask import Flask, Response, render_template, send_from_directory
+from flask import Flask, Response, render_template, send_from_directory, jsonify
 from flask_socketio import SocketIO, emit
 import boto3
 import requests
@@ -8,6 +8,9 @@ import os
 
 app = Flask(__name__)
 socketio = SocketIO(app)
+
+#Initialize DynamoDB
+dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
 
 # Path to JSON file for initial board state
 INITIAL_BOARD_PATH = "../static/checkersboard.json"
@@ -32,6 +35,19 @@ def index():
         game = json.load(f)
     # board = game["board"]
     return render_template('index.html', board = game["board"])
+
+
+# Route to get the board from DynamoDB
+@app.route('/getBoard', methods=['GET'])
+def get_board():
+    response = dynamodb.get_item(
+        TableName='CheckersBoard',
+        Key={'gameId': {'S': 'defaultBoard'}}
+    )
+    if 'Item' in response:
+        board = response['Item']['board']['S']
+        return jsonify({"board": board}), 200
+    return jsonify({"error": "Board not found"}), 404
 
 #Websocket to handl game updates
 @socketio.on('game_update')
