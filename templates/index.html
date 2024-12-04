@@ -61,7 +61,7 @@
             </div>
         </div>
     </div>
-    <script>
+    <!-- <script>
         //listen for updates from server
         const socket = io();
 
@@ -72,6 +72,24 @@
             currentPlayer = data.currentPlayer;
             buildBoard();
         });
+    </script> -->
+
+    <script>
+        const fetchBoard = async () => {
+            try{
+                const response = await fetch('http://<YOUR-ELASTIC-IP>:8080/getBoard');
+                const data = await response.json();
+                const board = JSON.parse(data.board); //parse the board string to JSON
+                console.log("Loaded Board:", board);
+                //update UI with the fetched board
+                buildBoard(board);
+            } catch (error) {
+                console.error("Error fetching board:", error);
+            }
+        };
+
+        //call fetchBoard when page loads
+        document.addEventListener("DOMContentLoaded", fetchBoard);
     </script>
 
     <script src="https://raw.githubusercontent.com/cs399f24/Checkers/development/static/function.js"></script>
