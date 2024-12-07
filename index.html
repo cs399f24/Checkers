@@ -126,6 +126,98 @@
                     piece.addEventListener('click', movePiece);
                 });
             }
+
+            //piece movement logic
+            let selectedPiece = null;
+
+            function movePiece(event) {
+                const piece = event.target;
+
+                // If selecting a piece
+                if (!selectedPiece) {
+                    selectedPiece = piece;
+                    piece.classList.add('selected'); // Highlight selected piece
+                    highlightMoves(piece); // Highlight possible moves
+                } else if (selectedPiece === piece) {
+                    // Deselect the piece if clicked again
+                    selectedPiece.classList.remove('selected');
+                    clearHighlights();
+                    selectedPiece = null;
+                } else {
+                    // If clicking on a highlighted move, move the piece
+                    const targetCell = event.target.closest('.cell');
+
+                    if (targetCell && targetCell.classList.contains('highlight')) {
+                        movePieceToCell(selectedPiece, targetCell);
+                        clearHighlights();
+                        selectedPiece.classList.remove('selected');
+                        selectedPiece = null;
+                    }
+                }
+            }
+
+            function highlightMoves(piece) {
+                const row = parseInt(piece.getAttribute('data-row'));
+                const col = parseInt(piece.getAttribute('data-column'));
+
+                // Example: Highlighting adjacent cells (modify for actual game logic)
+                const potentialMoves = [
+                    { row: row - 1, col: col - 1 },
+                    { row: row - 1, col: col + 1 },
+                    { row: row + 1, col: col - 1 },
+                    { row: row + 1, col: col + 1 }
+                ];
+
+                potentialMoves.forEach(move => {
+                    const cell = document.querySelector(`.cell[data-row="${move.row}"][data-column="${move.col}"]`);
+                    if (cell && cell.classList.contains('empty')) {
+                        cell.classList.add('highlight');
+                        cell.addEventListener('click', movePiece);
+                    }
+                });
+            }
+
+            function movePieceToCell(piece, targetCell) {
+                const oldCell = piece.parentElement;
+                const row = targetCell.getAttribute('data-row');
+                const col = targetCell.getAttribute('data-column');
+
+                targetCell.appendChild(piece);
+                oldCell.classList.add('empty');
+                oldCell.classList.remove('occupied');
+                targetCell.classList.add('occupied');
+                targetCell.classList.remove('empty');
+
+                // Send updated board state to the server
+                const board = captureBoardState();
+                socket.emit('game_update', { board });
+            }
+
+            function clearHighlights() {
+                document.querySelectorAll('.cell.highlight').forEach(cell => {
+                    cell.classList.remove('highlight');
+                    cell.removeEventListener('click', movePiece);
+                });
+            }
+
+            function captureBoardState() {
+                const board = [];
+                document.querySelectorAll('.row').forEach((rowElement, rowIndex) => {
+                    const row = [];
+                    rowElement.querySelectorAll('.cell').forEach(cell => {
+                        if (cell.querySelector('.blackPiece')) {
+                            row.push(1);
+                        } else if (cell.querySelector('.whitePiece')) {
+                            row.push(-1);
+                        } else {
+                            row.push(0);
+                        }
+                    });
+                    board.push(row);
+                });
+                return board;
+            }
+
         });
     </script>
     <script src="static/function.js"></script>
