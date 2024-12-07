@@ -61,7 +61,7 @@ def handle_game_update(data):
         #update board to all clients
         emit ('game_update', {'board': board}, broadcast=True)
     else:
-        emit ('invalid_move', {'message'L 'Invalid move'}, room = request.sid)
+        emit ('invalid_move', {'message' 'Invalid move'}, room = request.sid)
 
 def validate_move(board):
     # add game rules logic to validate the move
