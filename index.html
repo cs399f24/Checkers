@@ -70,13 +70,13 @@
             console.log("Received game update", data); //debug
             board = data.board;
             currentPlayer = data.currentPlayer;
-            buildBoard();
+            buildBoard(data.board);
         });
     </script>
 
     <script>
         $(document).ready(function() {
-            const apiGatewayUrl = 'https://sexvlim1ie.execute-api.us-east-1.amazonaws.com/Prod/checkers?GameID=default'; // Replace with your API Gateway URL
+            const apiGatewayUrl = 'https://sexvlim1ie.execute-api.us-east-1.amazonaws.com/Prod/checkers'; // Replace with your API Gateway URL
 
             // Fetch the board state from the API Gateway
             fetch(apiGatewayUrl)
