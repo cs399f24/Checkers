@@ -1,7 +1,7 @@
 let board, currentPlayer, capturedPosition = [], posNewPosition = [], readyToMove = null;
 
 // Fetch the initial board state
-fetch('/static/checkersboard.json')
+fetch('static/inplay.json')
     .then(response => response.json())
     .then(data => {
         board = data.board;

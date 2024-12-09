@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkers</title>
+    <link rel="stylesheet" href="static/styles.css"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="next-player counter">
+            <div class="occupied whitePiece" id="next-player"></div>
+            Player
+        </div>
+
+        <pre>{{ board | tojson }}</pre>
+
+        <div class="game" id="game">
+            {% for row in board %}
+                <div class="row">
+                    {% for tile in row %}
+                        <div class="cell 
+                        {% if tile == -1 %} black
+                        {% elif tile == 1 %} white
+                        {% else %} empty
+                        {% endif %}">
+                            {% if tile == -1 %}
+                                <div class="occupied blackPiece"></div>
+                            {% elif tile == 1 %}
+                                <div class="occupied whitePiece"></div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+        <div class="counter">
+            <div>
+                <div class="occupied whitePiece"></div>
+                <span id="white-player-count-pieces">20</span>
+            </div>
+            <div>
+                <div class="occupied blackPiece"></div>
+                <span id="black-player-count-pieces">20</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="easyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p>The <strong id="winner"></strong> player won the game !!</p>
+                <p><span id="loser"></span>, would you take your revenge ???</p>
+                <div class="btn-container">
+                    <button class="btn" onclick="location.reload()">Yes</button>
+                    <button class="btn" onclick="modalClose()">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        //listen for updates from server
+        const socket = io();
+
+        socket.on('game_update', (data) => {
+            //updating board state and rebuilding UI
+            console.log("Received game update", data); //debug
+            board = data.board;
+            currentPlayer = data.currentPlayer;
+            buildBoard(data.board);
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            const apiGatewayUrl = 'https://sexvlim1ie.execute-api.us-east-1.amazonaws.com/Prod/checkers'; // Replace with your API Gateway URL
+
+            // Fetch the board state from the API Gateway
+            fetch(apiGatewayUrl)
+                .then(response => response.json())
+                .then(data => {
+                    buildBoard(data.board);
+                });
+
+            function buildBoard(board) {
+                const gameElement = document.getElementById('game');
+                gameElement.innerHTML = ''; // Clear the existing board
+
+                board.forEach((row, rowIndex) => {
+                    const rowElement = document.createElement('div');
+                    rowElement.classList.add('row');
+
+                    row.forEach((tile, columnIndex) => {
+                        const cellElement = document.createElement('div');
+                        cellElement.classList.add('cell');
+
+                        if (tile === 1) {
+                            cellElement.classList.add('black');
+                            const pieceElement = document.createElement('div');
+                            pieceElement.classList.add('occupied', 'blackPiece');
+                            pieceElement.setAttribute('data-row', rowIndex);
+                            pieceElement.setAttribute('data-column', columnIndex);
+                            cellElement.appendChild(pieceElement);
+                        } else if (tile === -1) {
+                            cellElement.classList.add('white');
+                            const pieceElement = document.createElement('div');
+                            pieceElement.classList.add('occupied', 'whitePiece');
+                            pieceElement.setAttribute('data-row', rowIndex);
+                            pieceElement.setAttribute('data-column', columnIndex);
+                            cellElement.appendChild(pieceElement);
+                        } else {
+                            cellElement.classList.add('empty');
+                        }
+
+                        rowElement.appendChild(cellElement);
+                    });
+
+                    gameElement.appendChild(rowElement);
+                });
+
+                // Reattach event listeners for piece movement
+                document.querySelectorAll('.cell .occupied').forEach(piece => {
+                    piece.addEventListener('click', movePiece);
+                });
+            }
+
+            function movePiece(e) {
+                let piece = e.target;
+                const row = parseInt(piece.getAttribute("data-row"));
+                const column = parseInt(piece.getAttribute("data-column"));
+                let p = new Piece(row, column);
+
+                if (capturedPosition.length > 0) {
+                    enableToCapture(p);
+                } else {
+                    if (posNewPosition.length > 0) {
+                        enableToMove(p);
+                    }
+                }
+
+                if (currentPlayer === board[row][column]) {
+                    let player = reverse(currentPlayer);
+                    if (!findPieceCaptured(p, player)) {
+                        findPossibleNewPosition(p, player);
+                    }
+                }
+
+                const moveData = {
+                    board : board, //if we need full board state, include if needed
+                    player: currentPlayer,
+                    move: { row, column },
+                };
+                socket.emit('game_update', moveData);
+            }
+
+            //listen for board updates from server
+            socket.on('game_update', (data) => {
+                board = data.board; //update board
+                renderBoard(); // custom function to re-render board
+            });
+
+            //listen for invalid moves
+            socket.on('invalid_move', (data) => {
+                alert(data.message); //notify user about the invalid move
+            });
+            
+        });
+    </script>
+    <script src="static/function.js"></script>
+</body>
+</html>
