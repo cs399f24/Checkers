@@ -24,3 +24,16 @@ This project is an online Checkers game built with AWS API_Gateway and Flask-Soc
 
 ### 1. Create Fork of Repo
 
+### 2. Using AWS Amplify, connect the repo from GitHub
+
+### 3. Create the API Gateway
+
+### 4. Create the Database
+
+### 5. Create the Lambda
+
+### 6. Clone the Forked Repo
+
+### 7. Change Any Nescessary Links
+
+### 8. Push the Changes to AWS Amplify
