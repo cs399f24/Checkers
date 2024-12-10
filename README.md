@@ -72,6 +72,7 @@ This project is an online Checkers game built with AWS API Gateway and Flask-Soc
 4. Make sure the url is between the quotations.
 
 ### 8. Push the Changes to AWS Amplify
-1. "git add ."
-2. "git commit -m "Update configuration links""
-3. "git push origin main"
+```sh
+1. git add .
+2. git commit -m "Update configuration links"
+3. git push origin main
