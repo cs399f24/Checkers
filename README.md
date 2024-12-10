@@ -13,17 +13,14 @@ An online Checkers game that utilizes AWS resources for hosting and storage.
 
 ## Overview
 
-This project is an online Checkers game built with Flask and Flask-SocketIO for real-time communication. It uses AWS Cognito for user authentication and AWS S3 for static file hosting.
+This project is an online Checkers game built with Flask and Flask-SocketIO for real-time communication.
 
 ## Features
 
-- User authentication with AWS Cognito
 - Real-time game updates with Flask-SocketIO
-- Play against real people
 - Option to start a new game or continue a game in progress
-- Hosted on AWS EC2
 - Deployed with AWS Amplify
-- Game State data stored in DynamoDB as well as an AWS S3 Bucket
+- Game State data stored in DynamoDB
 
 ## Deployment Instructions
 
