@@ -264,3 +264,7 @@ body {
     border: 1px solid #4c382e;
     border-radius: 5px;
   }
+
+  pre {
+    color: black;
+}
