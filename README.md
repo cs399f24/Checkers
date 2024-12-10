@@ -1,6 +1,6 @@
 # Checkers Game
 
-An online Checkers game that utilizes AWS resources for hosting and storage.
+An online Checkers game that utilizes AWS resources for CICD, hosting, and storage.
 
 ## Contributors
 
