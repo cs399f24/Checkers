@@ -18,6 +18,7 @@ This project is an online Checkers game built with AWS API Gateway and Flask-Soc
 ## Features
 
 - Real-time game updates with Flask-SocketIO
+- AWS API Gateway communicates to AWS Lambda to store game data in AWS DynamoDB.
 - Option to start a new game or continue a game in progress
 - Deployed with AWS Amplify
 - Game State data stored in DynamoDB
